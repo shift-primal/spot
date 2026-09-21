@@ -23,9 +23,6 @@ importers:
       react-dom:
         specifier: ^19.2.8
         version: 19.3.0(react@19.3.0)
-      react-sketch-canvas:
-        specifier: ^8.0.0
-        version: 8.0.0(react@19.3.0)
       socket.io-client:
         specifier: ^4.8.3
         version: 4.8.3
@@ -1003,12 +1000,6 @@ packages:
     resolution: {integrity: sha512-JDk8dgif51OjFoDE70+OT9ICyYr+69HlmihNwp1+Nsfbna3t5sIiCa9ZJktDmQ4/1b/rn26hIAR2uYXDMr5r0Q==}
     peerDependencies:
       react: ^19.3.0
-
-  react-sketch-canvas@8.0.0:
-    resolution: {integrity: sha512-ijCcGxZsmHFfYMHVPoVj5tDvKCrjFihsjApxv+iaEnNbYneBT9nAKQaDEE8QUZb457DWO/AFx5i29HPt24R/PA==}
-    engines: {node: '>=22.13.0'}
-    peerDependencies:
-      react: '>=18.0.0'
 
   react@19.3.0:
     resolution: {integrity: sha512-E8LUcbtBWt20bbl2YoHfx4ZDBdxVTfOKtCZn9cDSJ4l6/nuoApcpIBcj47t2wZoVX8g2ZHuMHbiShgCR1T5Sog==}
@@ -1998,10 +1989,6 @@ snapshots:
     dependencies:
       react: 19.3.0
       scheduler: 0.28.0
-
-  react-sketch-canvas@8.0.0(react@19.3.0):
-    dependencies:
-      react: 19.3.0
 
   react@19.3.0: {}
 
