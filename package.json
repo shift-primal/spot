@@ -1,35 +1,15 @@
 {
 	"name": "spot",
 	"private": true,
-	"version": "0.0.0",
 	"type": "module",
-	"imports": {
-		"#/*": "./src/*"
-	},
 	"scripts": {
-		"dev": "vite",
-		"build": "tsc -b && vite build",
-		"lint": "eslint .",
-		"preview": "vite preview"
-	},
-	"dependencies": {
-		"@tailwindcss/vite": "^4.3.3",
-		"react": "^19.2.8",
-		"react-dom": "^19.2.8",
-		"tailwindcss": "^4.3.3"
+		"dev": "pnpm -r --parallel dev",
+		"dev:client": "pnpm --filter client dev",
+		"dev:server": "pnpm --filter server dev",
+		"build": "pnpm -r build",
+		"check": "biome check ."
 	},
 	"devDependencies": {
-		"@babel/core": "^7.29.7",
-		"@biomejs/biome": "^2.5.14",
-		"@rolldown/plugin-babel": "^0.2.3",
-		"@types/babel__core": "^7.20.5",
-		"@types/node": "^24.13.3",
-		"@types/react": "^19.2.18",
-		"@types/react-dom": "^19.2.7",
-		"@vitejs/plugin-react": "^6.1.1",
-		"babel-plugin-react-compiler": "^1.0.0",
-		"globals": "^17.12.0",
-		"typescript": "~6.0.2",
-		"vite": "^8.3.0"
+		"@biomejs/biome": "^2.5.14"
 	}
 }
