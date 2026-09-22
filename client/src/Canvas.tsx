@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import { socket } from "#/socket";
 
 const CanvasContainer = ({ children }: { children: React.ReactNode }) => (
 	<div className="border-2 w-7xl mx-auto mt-20 flex flex-col items-center">
@@ -11,9 +12,16 @@ interface BrushOptions {
 	brushSize: number;
 }
 
-interface LastPoint {
+interface Coordinates {
 	x: number;
 	y: number;
+}
+
+interface DrawPayload {
+	from: Coordinates;
+	to: Coordinates;
+	color: string;
+	size: number;
 }
 
 const getCoords = (e: React.MouseEvent, canvas: HTMLCanvasElement) => {
@@ -28,7 +36,7 @@ export const Canvas = () => {
 	const canvasRef = useRef<HTMLCanvasElement>(null);
 	const ctxRef = useRef<CanvasRenderingContext2D | null>(null);
 
-	const lastPointRef = useRef<LastPoint>({ x: 0, y: 0 });
+	const lastPointRef = useRef<Coordinates>({ x: 0, y: 0 });
 
 	const [isDrawing, setIsDrawing] = useState<boolean>(false);
 
@@ -70,6 +78,16 @@ export const Canvas = () => {
 		ctx.moveTo(lastPointRef.current.x, lastPointRef.current.y);
 		ctx.lineTo(point.x, point.y);
 		ctx.stroke();
+
+		const payload: DrawPayload = {
+			from: { x: lastPointRef.current.x, y: lastPointRef.current.y },
+			to: { x: point.x, y: point.y },
+			color: brushOptions.brushColor,
+			size: brushOptions.brushSize,
+		};
+
+		socket.emit("draw", payload);
+
 		lastPointRef.current = point;
 
 		console.log("Drawing at", point);
@@ -88,6 +106,21 @@ export const Canvas = () => {
 		ctx.clearRect(0, 0, canvas.width, canvas.height);
 
 		console.log("Reset canvas");
+	};
+
+	const changeBrushSize = (action: "inc" | "dec") => {
+		const step = action === "inc" ? 1 : -1;
+
+		setBrushOptions({
+			...brushOptions,
+			brushSize: brushOptions.brushSize + step,
+		});
+	};
+
+	const changeBrushColor = (e: React.ChangeEvent<HTMLInputElement>) => {
+		const color = e.target.value;
+
+		setBrushOptions({ ...brushOptions, brushColor: color });
 	};
 
 	return (
@@ -115,6 +148,33 @@ export const Canvas = () => {
 			>
 				Reset
 			</button>
+			<div className="flex gap-2">
+				<div className="flex flex-col items-center">
+					<div className="flex gap-2">
+						<button
+							type="button"
+							className="border px-4 py-0.5 cursor-pointer bg-gray-50 active:bg-gray-200"
+							onClick={() => changeBrushSize("inc")}
+						>
+							+
+						</button>
+						<button
+							type="button"
+							className="border px-4 py-0.5 cursor-pointer bg-gray-50 active:bg-gray-200"
+							onClick={() => changeBrushSize("dec")}
+						>
+							-
+						</button>
+					</div>
+					<span>{brushOptions.brushSize}px</span>
+				</div>
+				<input
+					id="color-picker"
+					type="color"
+					onChange={(e) => changeBrushColor(e)}
+					value={brushOptions.brushColor}
+				/>
+			</div>
 		</CanvasContainer>
 	);
 };

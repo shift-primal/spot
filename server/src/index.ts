@@ -20,6 +20,10 @@ io.on("connection", (socket) => {
 		socket.broadcast.emit("shout", text);
 	});
 
+	socket.on("draw", (segment) => {
+		console.log(segment);
+	});
+
 	socket.on("disconnect", () => console.log("disconnected:", socket.id));
 });
 
