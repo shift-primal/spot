@@ -1,9 +1,12 @@
-import { Canvas } from "#/Canvas";
+import { Canvas } from "#/components/Canvas";
+import { Container } from "#/components/Container";
 
 export const App = () => {
 	return (
 		<main>
-			<Canvas />
+			<Container>
+				<Canvas />
+			</Container>
 		</main>
 	);
 };

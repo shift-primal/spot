@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { getCoords } from "#/lib/canvas";
+import { getCoords, paintSegment } from "#/lib/canvas";
 import { socket } from "#/socket";
 import type { BrushOptions, Coordinates, DrawPayload } from "#/types";
 
@@ -37,15 +37,7 @@ export const useDrawingCanvas = (brushOptions: BrushOptions) => {
 
 		if (!isDrawing || !ctx || !lastPointRef.current) return;
 
-		ctx.lineWidth = brushOptions.brushSize;
-		ctx.strokeStyle = brushOptions.brushColor;
-
 		const point = getCoords(e, canvasRef.current);
-
-		ctx.beginPath();
-		ctx.moveTo(lastPointRef.current.x, lastPointRef.current.y);
-		ctx.lineTo(point.x, point.y);
-		ctx.stroke();
 
 		const payload: DrawPayload = {
 			from: { x: lastPointRef.current.x, y: lastPointRef.current.y },
@@ -53,6 +45,8 @@ export const useDrawingCanvas = (brushOptions: BrushOptions) => {
 			color: brushOptions.brushColor,
 			size: brushOptions.brushSize,
 		};
+
+		paintSegment(ctx, payload);
 
 		socket.emit("draw", payload);
 
