@@ -11,7 +11,10 @@ export const useDrawingCanvas = (brushOptions: BrushOptions) => {
 
 	// setup canvas
 	useEffect(() => {
-		const ctx = canvasRef.current.getContext("2d");
+		const ctx = canvasRef.current?.getContext("2d");
+
+		if (!ctx) return;
+
 		ctx.lineJoin = "round";
 		ctx.lineCap = "round";
 
@@ -24,6 +27,8 @@ export const useDrawingCanvas = (brushOptions: BrushOptions) => {
 	useEffect(() => {}, []);
 
 	const startDrawing = (e: React.MouseEvent<HTMLCanvasElement, MouseEvent>) => {
+		if (!canvasRef.current) return;
+
 		const point = getCoords(e, canvasRef.current);
 		lastPointRef.current = point;
 
@@ -33,6 +38,8 @@ export const useDrawingCanvas = (brushOptions: BrushOptions) => {
 	};
 
 	const draw = (e: React.MouseEvent<HTMLCanvasElement, MouseEvent>) => {
+		if (!canvasRef.current) return;
+
 		const ctx = ctxRef.current;
 
 		if (!isDrawing || !ctx || !lastPointRef.current) return;
@@ -64,7 +71,9 @@ export const useDrawingCanvas = (brushOptions: BrushOptions) => {
 	const resetCanvas = () => {
 		const canvas = canvasRef.current;
 		const ctx = ctxRef.current;
+
 		if (!canvas || !ctx) return;
+
 		ctx.clearRect(0, 0, canvas.width, canvas.height);
 
 		console.log("Reset canvas");
