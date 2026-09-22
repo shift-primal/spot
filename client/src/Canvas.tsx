@@ -65,7 +65,6 @@ export const Canvas = () => {
 		ctx.strokeStyle = brushOptions.brushColor;
 
 		const point = getCoords(e, canvasRef.current);
-		lastPointRef.current = point;
 
 		ctx.beginPath();
 		ctx.moveTo(lastPointRef.current.x, lastPointRef.current.y);

@@ -1,1 +1,14 @@
 @import "tailwindcss";
+
+:root {
+	--cursor-pencil: url("/cursor-pencil-normal.webp"), auto;
+	--cursor-pencil-drawing: url("/cursor-pencil-drawing.webp"), auto;
+}
+
+canvas {
+	cursor: var(--cursor-pencil);
+}
+
+canvas:active {
+	cursor: var(--cursor-pencil-drawing);
+}

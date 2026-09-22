@@ -18,6 +18,18 @@
 			"preset": "recommended"
 		}
 	},
+	"html": {
+		"experimentalFullSupportEnabled": true,
+		"formatter": {
+			"enabled": true
+		}
+	},
+	"css": {
+		"formatter": {
+			"enabled": true,
+			"quoteStyle": "double"
+		}
+	},
 	"javascript": {
 		"formatter": {
 			"quoteStyle": "double"
