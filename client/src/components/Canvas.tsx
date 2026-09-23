@@ -4,25 +4,31 @@ import {
 	type BrushControlsProps,
 } from "#/components/BrushControls";
 import { useDrawingCanvas } from "#/hooks/useDrawingCanvas";
+import { clamp } from "#/lib/general";
+import { MAX_BRUSH_SIZE, MIN_BRUSH_SIZE } from "#/lib/options";
 import type { BrushOptions } from "#/types";
 
 export const Canvas = () => {
 	const [brushOptions, setBrushOptions] = useState<BrushOptions>({
-		brushColor: "#000fff",
-		brushSize: 5,
+		color: "#000fff",
+		size: 5,
 	});
 
-	const { canvasRef, startDrawing, draw, stopDrawing, resetCanvas } =
+	const { canvasRef, startDrawing, continueDrawing, stopDrawing } =
 		useDrawingCanvas(brushOptions);
 
 	const changeBrushSize = (action: "inc" | "dec") =>
 		setBrushOptions({
 			...brushOptions,
-			brushSize: brushOptions.brushSize + (action === "inc" ? 1 : -1),
+			size: clamp(
+				brushOptions.size + (action === "inc" ? 1 : -1),
+				MIN_BRUSH_SIZE,
+				MAX_BRUSH_SIZE,
+			),
 		});
 
 	const changeBrushColor = (color: string) =>
-		setBrushOptions({ ...brushOptions, brushColor: color });
+		setBrushOptions({ ...brushOptions, color });
 
 	const brushProps: BrushControlsProps = {
 		brushOptions,
@@ -38,18 +44,11 @@ export const Canvas = () => {
 				className="border m-auto my-10"
 				ref={canvasRef}
 				onMouseDown={(e) => startDrawing(e)}
-				onMouseMove={(e) => draw(e)}
+				onMouseMove={(e) => continueDrawing(e)}
 				onMouseUp={() => stopDrawing()}
 				onMouseLeave={() => stopDrawing()}
 			></canvas>
 			<BrushControls {...brushProps} />
-			<button
-				type="button"
-				className="border px-4 py-0.5 cursor-pointer bg-red-200 active:bg-red-400 mb-5"
-				onClick={resetCanvas}
-			>
-				Reset
-			</button>
 		</>
 	);
 };

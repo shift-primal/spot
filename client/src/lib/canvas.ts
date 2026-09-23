@@ -1,9 +1,9 @@
-import type { Coordinates, DrawPayload } from "@spot/shared";
+import type { Point, Segment } from "@spot/shared";
 
-export const getCoords = (
+export const getPoint = (
 	e: React.MouseEvent,
 	canvas: HTMLCanvasElement,
-): Coordinates => {
+): Point => {
 	const rect = canvas.getBoundingClientRect();
 	return {
 		x: e.clientX - rect.left,
@@ -13,7 +13,7 @@ export const getCoords = (
 
 export const paintSegment = (
 	ctx: CanvasRenderingContext2D,
-	segment: DrawPayload,
+	segment: Segment,
 ) => {
 	ctx.lineWidth = segment.size;
 	ctx.strokeStyle = segment.color;

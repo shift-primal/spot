@@ -1,3 +1,6 @@
-import { io } from "socket.io-client";
+import type { ClientToServerEvents, ServerToClientEvents } from "@spot/shared";
+import { io, type Socket } from "socket.io-client";
 
-export const socket = io("http://localhost:3000");
+export const socket: Socket<ServerToClientEvents, ClientToServerEvents> = io(
+	"http://localhost:3000",
+);

@@ -1,11 +1,20 @@
-export interface Coordinates {
+export interface Point {
 	x: number;
 	y: number;
 }
 
-export interface DrawPayload {
-	from: Coordinates;
-	to: Coordinates;
+export interface Segment {
+	from: Point;
+	to: Point;
 	color: string;
 	size: number;
+}
+
+export interface ServerToClientEvents {
+	"segment:draw": (segment: Segment) => void;
+}
+
+export interface ClientToServerEvents {
+	"segment:draw": (segment: Segment) => void;
+	"history:get": (callback: (history: Segment[]) => void) => void;
 }

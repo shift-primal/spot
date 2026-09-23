@@ -1,4 +1,4 @@
 export interface BrushOptions {
-	brushColor: string;
-	brushSize: number;
+	color: string;
+	size: number;
 }

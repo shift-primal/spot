@@ -1,13 +1,13 @@
-import type { Coordinates, DrawPayload } from "@spot/shared";
+import type { Point, Segment } from "@spot/shared";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { getCoords, paintSegment } from "#/lib/canvas";
+import { getPoint, paintSegment } from "#/lib/canvas";
 import { socket } from "#/socket";
 import type { BrushOptions } from "#/types";
 
 export const useDrawingCanvas = (brushOptions: BrushOptions) => {
 	const canvasRef = useRef<HTMLCanvasElement>(null);
 	const ctxRef = useRef<CanvasRenderingContext2D | null>(null);
-	const lastPointRef = useRef<Coordinates>({ x: 0, y: 0 });
+	const lastPointRef = useRef<Point>({ x: 0, y: 0 });
 	const [isDrawing, setIsDrawing] = useState<boolean>(false);
 
 	const getSurface = useCallback(() => {
@@ -26,68 +26,66 @@ export const useDrawingCanvas = (brushOptions: BrushOptions) => {
 		ctx.lineCap = "round";
 
 		ctxRef.current = ctx;
-
-		console.log("Canvas set up, ready to draw");
 	}, []);
 
-	// todo: setup socket
+	// setup socket
 	useEffect(() => {
 		const surface = getSurface();
 		if (!surface) return;
 		const { ctx } = surface;
 
-		const onDraw = (payload: DrawPayload) => {
-			paintSegment(ctx, payload);
+		socket.emit("history:get", (history) => {
+			for (const segment of history) {
+				paintSegment(ctx, segment);
+			}
+		});
+
+		const onRemoteSegment = (segment: Segment) => {
+			paintSegment(ctx, segment);
 		};
 
-		socket.on("draw", onDraw);
+		socket.on("segment:draw", onRemoteSegment);
 
 		return () => {
-			socket.off("draw", onDraw);
+			socket.off("segment:draw", onRemoteSegment);
 		};
 	}, [getSurface]);
 
 	const startDrawing = (e: React.MouseEvent<HTMLCanvasElement, MouseEvent>) => {
 		if (!canvasRef.current) return;
 
-		const point = getCoords(e, canvasRef.current);
+		const point = getPoint(e, canvasRef.current);
 		lastPointRef.current = point;
 
 		setIsDrawing(true);
-
-		console.log("Started drawing at", point);
 	};
 
-	const draw = (e: React.MouseEvent<HTMLCanvasElement, MouseEvent>) => {
+	const continueDrawing = (
+		e: React.MouseEvent<HTMLCanvasElement, MouseEvent>,
+	) => {
 		const surface = getSurface();
 		if (!surface) return;
 		const { canvas, ctx } = surface;
 
 		if (!isDrawing) return;
 
-		const point = getCoords(e, canvas);
+		const point = getPoint(e, canvas);
 
-		const payload: DrawPayload = {
+		const segment: Segment = {
 			from: { x: lastPointRef.current.x, y: lastPointRef.current.y },
 			to: { x: point.x, y: point.y },
-			color: brushOptions.brushColor,
-			size: brushOptions.brushSize,
+			color: brushOptions.color,
+			size: brushOptions.size,
 		};
 
-		paintSegment(ctx, payload);
+		paintSegment(ctx, segment);
 
-		socket.emit("draw", payload);
+		socket.emit("segment:draw", segment);
 
 		lastPointRef.current = point;
-
-		console.log("Drawing at", point);
 	};
 
-	const stopDrawing = () => {
-		setIsDrawing(false);
-
-		console.log("Stopped drawing");
-	};
+	const stopDrawing = () => setIsDrawing(false);
 
 	const resetCanvas = () => {
 		const surface = getSurface();
@@ -95,16 +93,13 @@ export const useDrawingCanvas = (brushOptions: BrushOptions) => {
 		const { canvas, ctx } = surface;
 
 		ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-		console.log("Reset canvas");
 	};
 
 	return {
 		canvasRef,
 		startDrawing,
-		draw,
+		continueDrawing,
 		stopDrawing,
 		resetCanvas,
-		getSurface,
 	};
 };

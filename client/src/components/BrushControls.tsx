@@ -30,13 +30,13 @@ export const BrushControls = ({
 						-
 					</button>
 				</div>
-				<span>{brushOptions.brushSize}px</span>
+				<span>{brushOptions.size}px</span>
 			</div>
 			<input
 				id="color-picker"
 				type="color"
 				onChange={(e) => onColorChange(e.target.value)}
-				value={brushOptions.brushColor}
+				value={brushOptions.color}
 			/>
 		</div>
 	);
