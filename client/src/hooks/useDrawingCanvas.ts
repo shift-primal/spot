@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { getCoords, paintSegment } from "#/lib/canvas";
 import { socket } from "#/socket";
 import type { BrushOptions, Coordinates, DrawPayload } from "#/types";
@@ -9,10 +9,16 @@ export const useDrawingCanvas = (brushOptions: BrushOptions) => {
 	const lastPointRef = useRef<Coordinates>({ x: 0, y: 0 });
 	const [isDrawing, setIsDrawing] = useState<boolean>(false);
 
+	const getSurface = useCallback(() => {
+		const canvas = canvasRef.current;
+		const ctx = ctxRef.current;
+		if (!canvas || !ctx) return null;
+		return { canvas, ctx };
+	}, []);
+
 	// setup canvas
 	useEffect(() => {
 		const ctx = canvasRef.current?.getContext("2d");
-
 		if (!ctx) return;
 
 		ctx.lineJoin = "round";
@@ -24,7 +30,21 @@ export const useDrawingCanvas = (brushOptions: BrushOptions) => {
 	}, []);
 
 	// todo: setup socket
-	useEffect(() => {}, []);
+	useEffect(() => {
+		const surface = getSurface();
+		if (!surface) return;
+		const { ctx } = surface;
+
+		const onDraw = (payload: DrawPayload) => {
+			paintSegment(ctx, payload);
+		};
+
+		socket.on("draw", onDraw);
+
+		return () => {
+			socket.off("draw", onDraw);
+		};
+	}, [getSurface]);
 
 	const startDrawing = (e: React.MouseEvent<HTMLCanvasElement, MouseEvent>) => {
 		if (!canvasRef.current) return;
@@ -38,13 +58,13 @@ export const useDrawingCanvas = (brushOptions: BrushOptions) => {
 	};
 
 	const draw = (e: React.MouseEvent<HTMLCanvasElement, MouseEvent>) => {
-		if (!canvasRef.current) return;
+		const surface = getSurface();
+		if (!surface) return;
+		const { canvas, ctx } = surface;
 
-		const ctx = ctxRef.current;
+		if (!isDrawing) return;
 
-		if (!isDrawing || !ctx || !lastPointRef.current) return;
-
-		const point = getCoords(e, canvasRef.current);
+		const point = getCoords(e, canvas);
 
 		const payload: DrawPayload = {
 			from: { x: lastPointRef.current.x, y: lastPointRef.current.y },
@@ -69,15 +89,21 @@ export const useDrawingCanvas = (brushOptions: BrushOptions) => {
 	};
 
 	const resetCanvas = () => {
-		const canvas = canvasRef.current;
-		const ctx = ctxRef.current;
-
-		if (!canvas || !ctx) return;
+		const surface = getSurface();
+		if (!surface) return;
+		const { canvas, ctx } = surface;
 
 		ctx.clearRect(0, 0, canvas.width, canvas.height);
 
 		console.log("Reset canvas");
 	};
 
-	return { canvasRef, startDrawing, draw, stopDrawing, resetCanvas };
+	return {
+		canvasRef,
+		startDrawing,
+		draw,
+		stopDrawing,
+		resetCanvas,
+		getSurface,
+	};
 };

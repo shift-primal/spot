@@ -11,17 +11,8 @@ const io = new Server(httpServer, {
 io.on("connection", (socket) => {
 	console.log("connected:", socket.id);
 
-	socket.on("ping", (n: number) => {
-		console.log("ping from", socket.id, n);
-		socket.emit("pong", n + 1);
-	});
-
-	socket.on("shout", (text: string) => {
-		socket.broadcast.emit("shout", text);
-	});
-
 	socket.on("draw", (segment) => {
-		console.log(segment);
+		socket.broadcast.emit("draw", segment);
 	});
 
 	socket.on("disconnect", () => console.log("disconnected:", socket.id));
