@@ -1,5 +1,5 @@
-import { Canvas } from "#/components/Canvas";
-import { Container } from "#/components/Container";
+import { Canvas } from "#/components/canvas";
+import { Container } from "#/components/container";
 
 export const App = () => {
 	return (

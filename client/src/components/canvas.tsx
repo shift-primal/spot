@@ -1,6 +1,6 @@
 import { useState } from "react";
-import { Toolbar, type ToolbarProps } from "#/components/Toolbar";
-import { useDrawingCanvas } from "#/hooks/useDrawingCanvas";
+import { Toolbar, type ToolbarProps } from "#/components/toolbar";
+import { useDrawingCanvas } from "#/hooks/use-drawing-canvas";
 import { clamp } from "#/lib/general";
 import { MAX_BRUSH_SIZE, MIN_BRUSH_SIZE } from "#/lib/options";
 import type { BrushOptions, Tool } from "#/types";
