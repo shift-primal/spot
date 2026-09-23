@@ -2,12 +2,13 @@ import type { Point, Segment } from "@spot/shared";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { getPoint, paintSegment } from "#/lib/canvas";
 import { socket } from "#/socket";
-import type { BrushOptions } from "#/types";
+import type { BrushOptions, Tool } from "#/types";
 
 export const useDrawingCanvas = (brushOptions: BrushOptions) => {
 	const canvasRef = useRef<HTMLCanvasElement>(null);
 	const ctxRef = useRef<CanvasRenderingContext2D | null>(null);
 	const lastPointRef = useRef<Point>({ x: 0, y: 0 });
+	const strokeToolRef = useRef<Tool>("pencil");
 	const [isDrawing, setIsDrawing] = useState<boolean>(false);
 
 	const getSurface = useCallback(() => {
@@ -51,18 +52,18 @@ export const useDrawingCanvas = (brushOptions: BrushOptions) => {
 		};
 	}, [getSurface]);
 
-	const startDrawing = (e: React.MouseEvent<HTMLCanvasElement, MouseEvent>) => {
+	const startDrawing = (e: React.PointerEvent<HTMLCanvasElement>) => {
 		if (!canvasRef.current) return;
+		if (e.button === 1) return;
 
-		const point = getPoint(e, canvasRef.current);
-		lastPointRef.current = point;
-
+		const opposite = brushOptions.tool === "pencil" ? "eraser" : "pencil";
+		strokeToolRef.current = e.button === 2 ? opposite : brushOptions.tool;
+		lastPointRef.current = getPoint(e, canvasRef.current);
+		e.currentTarget.setPointerCapture(e.pointerId);
 		setIsDrawing(true);
 	};
 
-	const continueDrawing = (
-		e: React.MouseEvent<HTMLCanvasElement, MouseEvent>,
-	) => {
+	const continueDrawing = (e: React.PointerEvent<HTMLCanvasElement>) => {
 		const surface = getSurface();
 		if (!surface) return;
 		const { canvas, ctx } = surface;
@@ -74,7 +75,7 @@ export const useDrawingCanvas = (brushOptions: BrushOptions) => {
 		const segment: Segment = {
 			from: { x: lastPointRef.current.x, y: lastPointRef.current.y },
 			to: { x: point.x, y: point.y },
-			color: brushOptions.color,
+			color: strokeToolRef.current === "eraser" ? "#fff" : brushOptions.color,
 			size: brushOptions.size,
 		};
 

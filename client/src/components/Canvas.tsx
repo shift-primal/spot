@@ -1,37 +1,39 @@
 import { useState } from "react";
-import {
-	BrushControls,
-	type BrushControlsProps,
-} from "#/components/BrushControls";
+import { Toolbar, type ToolbarProps } from "#/components/Toolbar";
 import { useDrawingCanvas } from "#/hooks/useDrawingCanvas";
 import { clamp } from "#/lib/general";
 import { MAX_BRUSH_SIZE, MIN_BRUSH_SIZE } from "#/lib/options";
-import type { BrushOptions } from "#/types";
+import type { BrushOptions, Tool } from "#/types";
 
 export const Canvas = () => {
 	const [brushOptions, setBrushOptions] = useState<BrushOptions>({
-		color: "#000fff",
+		tool: "pencil",
+		color: "#000",
 		size: 5,
 	});
 
 	const { canvasRef, startDrawing, continueDrawing, stopDrawing } =
 		useDrawingCanvas(brushOptions);
 
+	const changeTool = (tool: Tool) =>
+		setBrushOptions((prev) => ({ ...prev, tool }));
+
 	const changeBrushSize = (action: "inc" | "dec") =>
-		setBrushOptions({
-			...brushOptions,
+		setBrushOptions((prev) => ({
+			...prev,
 			size: clamp(
-				brushOptions.size + (action === "inc" ? 1 : -1),
+				prev.size + (action === "inc" ? 1 : -1),
 				MIN_BRUSH_SIZE,
 				MAX_BRUSH_SIZE,
 			),
-		});
+		}));
 
 	const changeBrushColor = (color: string) =>
-		setBrushOptions({ ...brushOptions, color });
+		setBrushOptions((prev) => ({ ...prev, color }));
 
-	const brushProps: BrushControlsProps = {
+	const brushProps: ToolbarProps = {
 		brushOptions,
+		onToolChange: changeTool,
 		onSizeChange: changeBrushSize,
 		onColorChange: changeBrushColor,
 	};
@@ -41,14 +43,15 @@ export const Canvas = () => {
 			<canvas
 				width="1000"
 				height="500"
-				className="border m-auto my-10"
+				className="border m-auto my-10 touch-none"
 				ref={canvasRef}
-				onMouseDown={(e) => startDrawing(e)}
-				onMouseMove={(e) => continueDrawing(e)}
-				onMouseUp={() => stopDrawing()}
-				onMouseLeave={() => stopDrawing()}
+				onPointerDown={startDrawing}
+				onPointerMove={continueDrawing}
+				onPointerUp={stopDrawing}
+				onPointerCancel={stopDrawing}
+				onContextMenu={(e) => e.preventDefault()}
 			></canvas>
-			<BrushControls {...brushProps} />
+			<Toolbar {...brushProps} />
 		</>
 	);
 };
