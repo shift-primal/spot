@@ -1,8 +1,6 @@
 import { useState } from "react";
 import { Toolbar, type ToolbarProps } from "#/components/toolbar";
 import { useDrawingCanvas } from "#/hooks/use-drawing-canvas";
-import { clamp } from "#/lib/general";
-import { MAX_BRUSH_SIZE, MIN_BRUSH_SIZE } from "#/lib/options";
 import type { BrushOptions, Tool } from "#/types";
 
 export const Canvas = () => {
@@ -18,14 +16,10 @@ export const Canvas = () => {
 	const changeTool = (tool: Tool) =>
 		setBrushOptions((prev) => ({ ...prev, tool }));
 
-	const changeBrushSize = (action: "inc" | "dec") =>
+	const changeBrushSize = (px: number) =>
 		setBrushOptions((prev) => ({
 			...prev,
-			size: clamp(
-				prev.size + (action === "inc" ? 1 : -1),
-				MIN_BRUSH_SIZE,
-				MAX_BRUSH_SIZE,
-			),
+			size: px,
 		}));
 
 	const changeBrushColor = (color: string) =>

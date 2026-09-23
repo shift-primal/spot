@@ -1,9 +1,13 @@
+import { ColorPicker } from "#/components/toolbar/color-picker";
+import { SizeSlider } from "#/components/toolbar/size-slider";
+import { ToolSelection } from "#/components/toolbar/tool-selection";
+
 import type { BrushOptions, Tool } from "#/types";
 
 export interface ToolbarProps {
 	brushOptions: BrushOptions;
 	onToolChange: (tool: Tool) => void;
-	onSizeChange: (action: "inc" | "dec") => void;
+	onSizeChange: (px: number) => void;
 	onColorChange: (color: string) => void;
 }
 
@@ -13,48 +17,26 @@ export const Toolbar = ({
 	onSizeChange,
 	onColorChange,
 }: ToolbarProps) => {
-	return (
-		<div className="flex gap-2">
-			<div className="flex flex-col items-center">
-				<div className="flex gap-2">
-					<button
-						type="button"
-						className="border px-4 py-0.5 cursor-pointer bg-gray-50 active:bg-gray-200"
-						onClick={() => onToolChange("pencil")}
-					>
-						Pencil
-					</button>
+	const toolSelectionProps = {
+		brushOptions,
+		onToolChange,
+	};
 
-					<button
-						type="button"
-						className="border px-4 py-0.5 cursor-pointer bg-gray-50 active:bg-gray-200"
-						onClick={() => onToolChange("eraser")}
-					>
-						Eraser
-					</button>
-					<button
-						type="button"
-						className="border px-4 py-0.5 cursor-pointer bg-gray-50 active:bg-gray-200"
-						onClick={() => onSizeChange("inc")}
-					>
-						+
-					</button>
-					<button
-						type="button"
-						className="border px-4 py-0.5 cursor-pointer bg-gray-50 active:bg-gray-200"
-						onClick={() => onSizeChange("dec")}
-					>
-						-
-					</button>
-				</div>
-				<span>{brushOptions.size}px</span>
-			</div>
-			<input
-				id="color-picker"
-				type="color"
-				onChange={(e) => onColorChange(e.target.value)}
-				value={brushOptions.color}
-			/>
+	const sizeSliderProps = {
+		brushOptions,
+		onSizeChange,
+	};
+
+	const colorPickerProps = {
+		brushOptions,
+		onColorChange,
+	};
+
+	return (
+		<div className="flex gap-2 items-center">
+			<ToolSelection {...toolSelectionProps} />
+			<SizeSlider {...sizeSliderProps} />
+			<ColorPicker {...colorPickerProps} />
 		</div>
 	);
 };
