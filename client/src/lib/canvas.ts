@@ -1,4 +1,4 @@
-import type { Coordinates, DrawPayload } from "#/types";
+import type { Coordinates, DrawPayload } from "@spot/shared";
 
 export const getCoords = (
 	e: React.MouseEvent,

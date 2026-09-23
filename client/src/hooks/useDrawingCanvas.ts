@@ -1,7 +1,8 @@
+import type { Coordinates, DrawPayload } from "@spot/shared";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { getCoords, paintSegment } from "#/lib/canvas";
 import { socket } from "#/socket";
-import type { BrushOptions, Coordinates, DrawPayload } from "#/types";
+import type { BrushOptions } from "#/types";
 
 export const useDrawingCanvas = (brushOptions: BrushOptions) => {
 	const canvasRef = useRef<HTMLCanvasElement>(null);
