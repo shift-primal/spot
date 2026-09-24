@@ -1,8 +1,9 @@
 import { createServer } from "node:http";
-import type {
-	ClientToServerEvents,
-	Segment,
-	ServerToClientEvents,
+import {
+	type ClientToServerEvents,
+	parseName,
+	type Segment,
+	type ServerToClientEvents,
 } from "@spot/shared";
 import express from "express";
 import { Server } from "socket.io";
@@ -12,14 +13,32 @@ const MAX_SEGMENTS = 50000;
 const app = express();
 const httpServer = createServer(app);
 
-const io = new Server<ClientToServerEvents, ServerToClientEvents>(httpServer, {
+interface SocketData {
+	name: string;
+}
+
+const io = new Server<
+	ClientToServerEvents,
+	ServerToClientEvents,
+	Record<string, never>,
+	SocketData
+>(httpServer, {
 	cors: { origin: "http://localhost:5173" },
+});
+
+// reject connections without a valid name
+io.use((socket, next) => {
+	const name = parseName(socket.handshake.auth.name);
+	if (!name) return next(new Error("invalid name"));
+
+	socket.data.name = name;
+	next();
 });
 
 const history: Segment[] = [];
 
 io.on("connection", (socket) => {
-	console.log("connected:", socket.id);
+	console.log("connected:", socket.id, socket.data.name);
 
 	socket.on("history:get", (callback) => {
 		callback(history);
@@ -36,9 +55,11 @@ io.on("connection", (socket) => {
 		}
 	});
 
-	// volatile: a dropped cursor update is fine, the next one replaces it
 	socket.on("cursor:move", (cursor) => {
-		socket.broadcast.volatile.emit("cursor:move", socket.id, cursor);
+		socket.broadcast.volatile.emit("cursor:move", socket.id, {
+			...cursor,
+			name: socket.data.name,
+		});
 	});
 
 	socket.on("cursor:leave", () => {

@@ -15,16 +15,32 @@ export interface Segment {
 	size: number;
 }
 
-// a user's brush cursor, position in world coordinates
 export interface Cursor {
 	position: Point;
 	color: string;
 	size: number;
 }
 
+export interface RemoteCursor extends Cursor {
+	name: string;
+}
+
+export interface JoinAuth {
+	name: string;
+}
+
+export const NAME_MAX_LENGTH = 24;
+
+export const parseName = (name: unknown): string | null => {
+	if (typeof name !== "string") return null;
+	const trimmed = name.trim();
+	if (!trimmed || trimmed.length > NAME_MAX_LENGTH) return null;
+	return trimmed;
+};
+
 export interface ServerToClientEvents {
 	"segment:draw": (segment: Segment) => void;
-	"cursor:move": (id: string, cursor: Cursor) => void;
+	"cursor:move": (id: string, cursor: RemoteCursor) => void;
 	"cursor:leave": (id: string) => void;
 }
 

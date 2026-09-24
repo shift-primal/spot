@@ -14,6 +14,14 @@ export const usePaintCursor = (
 			const canvas = canvasRef.current;
 			if (!canvas) return;
 
+			if (
+				e.pointerType === "touch" &&
+				(e.type === "pointerup" || e.type === "pointercancel")
+			) {
+				setPosition(null);
+				return;
+			}
+
 			setRightHeld((e.buttons & 2) !== 0);
 
 			const rect = canvas.getBoundingClientRect();
@@ -31,12 +39,14 @@ export const usePaintCursor = (
 		window.addEventListener("pointermove", handlePointer);
 		window.addEventListener("pointerdown", handlePointer);
 		window.addEventListener("pointerup", handlePointer);
+		window.addEventListener("pointercancel", handlePointer);
 		document.documentElement.addEventListener("pointerleave", hide);
 
 		return () => {
 			window.removeEventListener("pointermove", handlePointer);
 			window.removeEventListener("pointerdown", handlePointer);
 			window.removeEventListener("pointerup", handlePointer);
+			window.removeEventListener("pointercancel", handlePointer);
 			document.documentElement.removeEventListener("pointerleave", hide);
 		};
 	}, [canvasRef]);

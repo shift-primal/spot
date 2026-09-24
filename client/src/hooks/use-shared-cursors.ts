@@ -1,4 +1,4 @@
-import type { Cursor, Point } from "@spot/shared";
+import type { Point, RemoteCursor } from "@spot/shared";
 import { type RefObject, useEffect, useRef, useState } from "react";
 import { getPoint } from "#/lib/canvas";
 import { CURSOR_SEND_INTERVAL } from "#/lib/options";
@@ -14,7 +14,7 @@ export const useSharedCursors = ({
 	brushOptions: BrushOptions;
 	screenToWorld: (p: Point) => Point;
 }) => {
-	const [cursors, setCursors] = useState<Map<string, Cursor>>(new Map());
+	const [cursors, setCursors] = useState<Map<string, RemoteCursor>>(new Map());
 
 	const positionRef = useRef<Point | null>(null);
 	const rightHeldRef = useRef(false);
@@ -63,27 +63,39 @@ export const useSharedCursors = ({
 		const canvas = canvasRef.current;
 		if (!canvas) return;
 
-		const handlePointer = (e: PointerEvent) => {
-			positionRef.current = screenToWorld(getPoint(e, canvas));
-			rightHeldRef.current = (e.buttons & 2) !== 0;
-			sendRef.current();
-		};
-
 		const handleLeave = () => {
+			if (!positionRef.current) return;
+
 			positionRef.current = null;
 			dirtyRef.current = false;
 			socket.emit("cursor:leave");
 		};
 
+		const handlePointer = (e: PointerEvent) => {
+			if (
+				e.pointerType === "touch" &&
+				(e.type === "pointerup" || e.type === "pointercancel")
+			) {
+				handleLeave();
+				return;
+			}
+
+			positionRef.current = screenToWorld(getPoint(e, canvas));
+			rightHeldRef.current = (e.buttons & 2) !== 0;
+			sendRef.current();
+		};
+
 		canvas.addEventListener("pointermove", handlePointer);
 		canvas.addEventListener("pointerdown", handlePointer);
 		canvas.addEventListener("pointerup", handlePointer);
+		canvas.addEventListener("pointercancel", handlePointer);
 		canvas.addEventListener("pointerleave", handleLeave);
 
 		return () => {
 			canvas.removeEventListener("pointermove", handlePointer);
 			canvas.removeEventListener("pointerdown", handlePointer);
 			canvas.removeEventListener("pointerup", handlePointer);
+			canvas.removeEventListener("pointercancel", handlePointer);
 			canvas.removeEventListener("pointerleave", handleLeave);
 			if (timerRef.current) clearTimeout(timerRef.current);
 			timerRef.current = null;
@@ -96,7 +108,7 @@ export const useSharedCursors = ({
 	}, [brushOptions]);
 
 	useEffect(() => {
-		const handleMove = (id: string, cursor: Cursor) =>
+		const handleMove = (id: string, cursor: RemoteCursor) =>
 			setCursors((prev) => new Map(prev).set(id, cursor));
 
 		const handleLeave = (id: string) =>
