@@ -1,5 +1,6 @@
 import { cn } from "cn";
 import { PaintCursor } from "#/components/ui/paint-cursor";
+import { RemoteCursors } from "#/components/ui/remote-cursors";
 import { useDrawingCanvas } from "#/hooks/use-drawing-canvas";
 import type { BrushOptions } from "#/types";
 
@@ -19,6 +20,8 @@ export const Canvas = ({
 		zoom,
 		isPanning,
 		resizeAnchor,
+		cursors,
+		cursorLayerRef,
 		startDrawing,
 		continueDrawing,
 		stopDrawing,
@@ -26,6 +29,7 @@ export const Canvas = ({
 
 	return (
 		<>
+			<RemoteCursors cursors={cursors} layerRef={cursorLayerRef} />
 			<PaintCursor
 				brushOptions={brushOptions}
 				canvasRef={canvasRef}

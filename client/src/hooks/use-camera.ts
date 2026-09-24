@@ -1,4 +1,4 @@
-import { type Point, WORLD_HEIGHT, WORLD_WIDTH } from "@spot/shared";
+import { type Point, WORLD_SIZE } from "@spot/shared";
 import { useCallback, useRef, useState } from "react";
 import { clampAxis } from "#/lib/camera";
 import { clamp } from "#/lib/general";
@@ -11,8 +11,16 @@ export const useCamera = () => {
 
 	const clampToWorld = (viewport: { width: number; height: number }) => {
 		const camera = cameraRef.current;
-		camera.x = clampAxis(camera.x, viewport.width / camera.zoom, WORLD_WIDTH);
-		camera.y = clampAxis(camera.y, viewport.height / camera.zoom, WORLD_HEIGHT);
+		camera.x = clampAxis(
+			camera.x,
+			viewport.width / camera.zoom,
+			WORLD_SIZE.width,
+		);
+		camera.y = clampAxis(
+			camera.y,
+			viewport.height / camera.zoom,
+			WORLD_SIZE.height,
+		);
 	};
 
 	const screenToWorld = useCallback((p: Point): Point => {

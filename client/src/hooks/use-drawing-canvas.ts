@@ -1,9 +1,10 @@
-import { type Segment, WORLD_HEIGHT, WORLD_WIDTH } from "@spot/shared";
+import { type Segment, WORLD_SIZE } from "@spot/shared";
 import { useCallback, useRef } from "react";
 import { useBrushControls } from "#/hooks/use-brush-controls";
 import { useCamera } from "#/hooks/use-camera";
 import { useCameraControls } from "#/hooks/use-camera-controls";
 import { type Surface, useCanvasSurface } from "#/hooks/use-canvas-surface";
+import { useSharedCursors } from "#/hooks/use-shared-cursors";
 import { useSharedSegments } from "#/hooks/use-shared-segments";
 import { useStroke } from "#/hooks/use-stroke";
 import { paintSegment } from "#/lib/canvas";
@@ -17,6 +18,7 @@ export const useDrawingCanvas = (
 	const { cameraRef, zoom, screenToWorld, panBy, clampToWorld, zoomAt } =
 		useCamera();
 	const segmentsRef = useRef<Segment[]>([]);
+	const cursorLayerRef = useRef<HTMLDivElement>(null);
 
 	const drawScene = useCallback(
 		({ canvas, ctx }: Surface) => {
@@ -36,10 +38,17 @@ export const useDrawingCanvas = (
 				-y * dpr * zoom,
 			);
 			ctx.fillStyle = "#fff";
-			ctx.fillRect(0, 0, WORLD_WIDTH, WORLD_HEIGHT);
+			ctx.fillRect(0, 0, WORLD_SIZE.width, WORLD_SIZE.height);
 
 			for (const segment of segmentsRef.current) {
 				paintSegment(ctx, segment);
+			}
+
+			// move the remote cursor layer with the camera (world -> screen)
+			const layer = cursorLayerRef.current;
+			if (layer) {
+				layer.style.transform = `scale(${zoom}) translate(${-x}px, ${-y}px)`;
+				layer.style.setProperty("--zoom", String(zoom));
 			}
 		},
 		[cameraRef],
@@ -65,6 +74,12 @@ export const useDrawingCanvas = (
 		canvasRef,
 		size: brushOptions.size,
 		onSizeChange,
+	});
+
+	const { cursors } = useSharedCursors({
+		canvasRef,
+		brushOptions,
+		screenToWorld,
 	});
 
 	const paintSegments = useCallback(
@@ -103,6 +118,8 @@ export const useDrawingCanvas = (
 		zoom,
 		isPanning,
 		resizeAnchor,
+		cursors,
+		cursorLayerRef,
 		redraw,
 		startDrawing,
 		continueDrawing,

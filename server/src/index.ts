@@ -36,7 +36,19 @@ io.on("connection", (socket) => {
 		}
 	});
 
-	socket.on("disconnect", () => console.log("disconnected:", socket.id));
+	// volatile: a dropped cursor update is fine, the next one replaces it
+	socket.on("cursor:move", (cursor) => {
+		socket.broadcast.volatile.emit("cursor:move", socket.id, cursor);
+	});
+
+	socket.on("cursor:leave", () => {
+		socket.broadcast.emit("cursor:leave", socket.id);
+	});
+
+	socket.on("disconnect", () => {
+		console.log("disconnected:", socket.id);
+		socket.broadcast.emit("cursor:leave", socket.id);
+	});
 });
 
 app.get("/health", (_req, res) => res.send("ok"));

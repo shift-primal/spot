@@ -30,3 +30,6 @@ export const TOOL_KEYS: Record<string, Tool> = {
 };
 
 export const COLOR_PICKER_KEY = "c";
+
+// min ms between cursor updates sent to the server
+export const CURSOR_SEND_INTERVAL = 50;
