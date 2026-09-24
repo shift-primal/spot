@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { PaintCursor } from "#/components/paint-cursor";
 import { Toolbar, type ToolbarProps } from "#/components/toolbar";
 import { useDrawingCanvas } from "#/hooks/use-drawing-canvas";
 import type { BrushOptions, Tool } from "#/types";
@@ -34,10 +35,11 @@ export const Canvas = () => {
 
 	return (
 		<>
+			<PaintCursor brushOptions={brushOptions} canvasRef={canvasRef} />
 			<canvas
 				width="1000"
 				height="500"
-				className="border m-auto my-10 touch-none"
+				className="border m-auto my-10 touch-none cursor-none"
 				ref={canvasRef}
 				onPointerDown={startDrawing}
 				onPointerMove={continueDrawing}
