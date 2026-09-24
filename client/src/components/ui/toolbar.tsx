@@ -33,7 +33,7 @@ export const Toolbar = ({
 	};
 
 	return (
-		<div className="flex gap-2 items-center">
+		<div className="flex gap-2 items-center absolute bottom-4 left-1/2 -translate-x-1/2 border py-2 px-4 rounded-full">
 			<ToolSelection {...toolSelectionProps} />
 			<SizeSlider {...sizeSliderProps} />
 			<ColorPicker {...colorPickerProps} />

@@ -1,4 +1,4 @@
-import { Slider } from "#/components/ui/slider";
+import { Slider } from "#/components/shadcn/slider";
 import { MAX_BRUSH_SIZE, MIN_BRUSH_SIZE } from "#/lib/options";
 import type { BrushOptions } from "#/types";
 

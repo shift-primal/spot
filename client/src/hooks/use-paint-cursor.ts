@@ -1,14 +1,11 @@
 import type { Point } from "@spot/shared";
 import { type RefObject, useEffect, useState } from "react";
-import type { BrushOptions } from "#/types";
+import type { Tool } from "#/types";
 
-export const PaintCursor = ({
-	brushOptions,
-	canvasRef,
-}: {
-	brushOptions: BrushOptions;
-	canvasRef: RefObject<HTMLCanvasElement | null>;
-}) => {
+export const usePaintCursor = (
+	canvasRef: RefObject<HTMLCanvasElement | null>,
+	tool: Tool,
+) => {
 	const [position, setPosition] = useState<Point | null>(null);
 	const [rightHeld, setRightHeld] = useState(false);
 
@@ -44,20 +41,8 @@ export const PaintCursor = ({
 		};
 	}, [canvasRef]);
 
-	if (!position) return null;
+	// Right-click draws with the opposite tool (see useStroke)
+	const erasing = (tool === "eraser") !== rightHeld;
 
-	const erasing = (brushOptions.tool === "eraser") !== rightHeld;
-
-	return (
-		<div
-			className="rounded-full z-999 fixed -translate-1/2 pointer-events-none outline -outline-offset-1"
-			style={{
-				backgroundColor: erasing ? "#fff" : brushOptions.color,
-				height: brushOptions.size,
-				width: brushOptions.size,
-				left: `${position.x}px`,
-				top: `${position.y}px`,
-			}}
-		/>
-	);
+	return { position, erasing };
 };

@@ -1,10 +1,10 @@
 import { HexColorPicker } from "react-colorful";
-import { ColorTrigger } from "#/components/toolbar/color-trigger";
 import {
 	Popover,
 	PopoverContent,
 	PopoverTrigger,
-} from "#/components/ui/popover";
+} from "#/components/shadcn/popover";
+import { ColorTrigger } from "#/components/toolbar/color-trigger";
 import type { BrushOptions } from "#/types";
 
 export const ColorPicker = ({

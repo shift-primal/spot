@@ -1,5 +1,5 @@
 import { Eraser, Pencil } from "lucide-react";
-import { ToggleGroup, ToggleGroupItem } from "#/components/ui/toggle-group";
+import { ToggleGroup, ToggleGroupItem } from "#/components/shadcn/toggle-group";
 import type { BrushOptions, Tool } from "#/types";
 
 export const ToolSelection = ({
