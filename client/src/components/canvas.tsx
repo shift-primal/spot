@@ -7,12 +7,16 @@ export interface CanvasProps {
 }
 
 export const Canvas = ({ brushOptions }: CanvasProps) => {
-	const { canvasRef, startDrawing, continueDrawing, stopDrawing } =
+	const { canvasRef, zoom, startDrawing, continueDrawing, stopDrawing } =
 		useDrawingCanvas(brushOptions);
 
 	return (
 		<>
-			<PaintCursor brushOptions={brushOptions} canvasRef={canvasRef} />
+			<PaintCursor
+				brushOptions={brushOptions}
+				canvasRef={canvasRef}
+				zoom={zoom}
+			/>
 			<canvas
 				className="touch-none cursor-none h-full w-full"
 				ref={canvasRef}

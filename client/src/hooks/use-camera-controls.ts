@@ -6,16 +6,23 @@ export const useCameraControls = ({
 	canvasRef,
 	panBy,
 	zoomAt,
+	clampToWorld,
 	redraw,
 }: {
 	canvasRef: RefObject<HTMLCanvasElement | null>;
 	panBy: (delta: Point) => void;
 	zoomAt: (screenPoint: Point, factor: number) => void;
+	clampToWorld: (viewport: { width: number; height: number }) => void;
 	redraw: () => void;
 }) => {
 	useEffect(() => {
 		const canvas = canvasRef.current;
 		if (!canvas) return;
+
+		const viewport = () => ({
+			width: canvas.clientWidth,
+			height: canvas.clientHeight,
+		});
 
 		const handlePointerDown = (e: PointerEvent) => {
 			if (e.button !== 1) return;
@@ -28,6 +35,7 @@ export const useCameraControls = ({
 			if ((e.buttons & 4) === 0) return;
 
 			panBy({ x: e.movementX, y: e.movementY });
+			clampToWorld(viewport());
 			redraw();
 		};
 
@@ -39,6 +47,7 @@ export const useCameraControls = ({
 			const factor = Math.exp(-e.deltaY * 0.001);
 
 			zoomAt(screenPoint, factor);
+			clampToWorld(viewport());
 			redraw();
 		};
 
@@ -51,5 +60,5 @@ export const useCameraControls = ({
 			canvas.removeEventListener("pointerdown", handlePointerDown);
 			canvas.removeEventListener("wheel", handleWheel);
 		};
-	}, [canvasRef, panBy, zoomAt, redraw]);
+	}, [canvasRef, panBy, zoomAt, clampToWorld, redraw]);
 };

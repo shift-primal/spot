@@ -1,11 +1,19 @@
-import type { Point } from "@spot/shared";
-import { useCallback, useRef } from "react";
+import { type Point, WORLD_HEIGHT, WORLD_WIDTH } from "@spot/shared";
+import { useCallback, useRef, useState } from "react";
+import { clampAxis } from "#/lib/camera";
 import { clamp } from "#/lib/general";
-import { CAMERA_ZOOM_BOUNDS } from "#/lib/options";
+import { CAMERA_ZOOM_BOUNDS, INITIAL_CAMERA } from "#/lib/options";
 import type { Camera } from "#/types";
 
 export const useCamera = () => {
-	const cameraRef = useRef<Camera>({ x: 5000, y: 5000, zoom: 4 });
+	const cameraRef = useRef<Camera>({ ...INITIAL_CAMERA });
+	const [zoom, setZoom] = useState(INITIAL_CAMERA.zoom);
+
+	const clampToWorld = (viewport: { width: number; height: number }) => {
+		const camera = cameraRef.current;
+		camera.x = clampAxis(camera.x, viewport.width / camera.zoom, WORLD_WIDTH);
+		camera.y = clampAxis(camera.y, viewport.height / camera.zoom, WORLD_HEIGHT);
+	};
 
 	const screenToWorld = useCallback((p: Point): Point => {
 		const { x, y, zoom } = cameraRef.current;
@@ -31,7 +39,9 @@ export const useCamera = () => {
 
 		camera.x = before.x - screenPoint.x / camera.zoom;
 		camera.y = before.y - screenPoint.y / camera.zoom;
+
+		setZoom(camera.zoom);
 	};
 
-	return { cameraRef, screenToWorld, panBy, zoomAt };
+	return { cameraRef, zoom, screenToWorld, panBy, zoomAt, clampToWorld };
 };

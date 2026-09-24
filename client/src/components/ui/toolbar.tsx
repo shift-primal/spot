@@ -33,7 +33,8 @@ export const Toolbar = ({
 	};
 
 	return (
-		<div className="flex gap-2 items-center absolute bottom-4 left-1/2 -translate-x-1/2 border py-2 px-4 rounded-full bg-background">
+		// z = 50, toolbar should be over cursor (40)
+		<div className="flex gap-2 items-center absolute bottom-4 left-1/2 -translate-x-1/2 border py-2 px-4 rounded-full bg-background z-50">
 			<ToolSelection {...toolSelectionProps} />
 			<SizeSlider {...sizeSliderProps} />
 			<ColorPicker {...colorPickerProps} />
