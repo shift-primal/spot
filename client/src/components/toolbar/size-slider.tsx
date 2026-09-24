@@ -11,13 +11,14 @@ export const SizeSlider = ({
 }) => {
 	return (
 		<Slider
-			className="min-w-32"
+			className="min-w-48"
 			min={BRUSH_SIZE_BOUNDS.min}
 			max={BRUSH_SIZE_BOUNDS.max}
 			value={[brushOptions.size]}
 			onValueChange={(val) =>
 				onSizeChange(typeof val === "number" ? val : val[0])
 			}
+			thumbLabel={(size) => `${size}px`}
 		/>
 	);
 };

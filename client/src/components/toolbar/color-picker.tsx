@@ -15,11 +15,15 @@ import type { BrushOptions } from "#/types";
 export const ColorPicker = ({
 	brushOptions,
 	onColorChange,
+	open,
+	onOpenChange,
 }: {
 	brushOptions: BrushOptions;
 	onColorChange: (color: string) => void;
+	open: boolean;
+	onOpenChange: (open: boolean) => void;
 }) => (
-	<Popover>
+	<Popover open={open} onOpenChange={onOpenChange}>
 		<Tooltip>
 			<TooltipTrigger
 				render={

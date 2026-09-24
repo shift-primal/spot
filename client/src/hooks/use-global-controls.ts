@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { BROWSER_ZOOM_KEYS, TOOL_KEYS } from "#/lib/options";
+import { BROWSER_ZOOM_KEYS, COLOR_PICKER_KEY, TOOL_KEYS } from "#/lib/options";
 import type { Tool } from "#/types";
 
 const isEditable = (target: EventTarget | null) =>
@@ -10,8 +10,10 @@ const isEditable = (target: EventTarget | null) =>
 
 export const useGlobalControls = ({
 	onToolChange,
+	onColorPickerToggle,
 }: {
 	onToolChange: (tool: Tool) => void;
+	onColorPickerToggle: () => void;
 }) => {
 	const [spaceHeld, setSpaceHeld] = useState<boolean>(false);
 
@@ -30,10 +32,14 @@ export const useGlobalControls = ({
 				return;
 			}
 
-			const tool = TOOL_KEYS[e.key.toLowerCase()];
-			if (tool && !e.repeat && !e.ctrlKey && !e.metaKey && !e.altKey) {
-				onToolChange(tool);
-			}
+			if (e.repeat || e.ctrlKey || e.metaKey || e.altKey) return;
+
+			const key = e.key.toLowerCase();
+
+			const tool = TOOL_KEYS[key];
+			if (tool) onToolChange(tool);
+
+			if (key === COLOR_PICKER_KEY) onColorPickerToggle();
 		};
 
 		const handleKeyUp = (e: KeyboardEvent) => {
@@ -64,7 +70,7 @@ export const useGlobalControls = ({
 			window.removeEventListener("wheel", handleWheel);
 			document.removeEventListener("gesturestart", handleGesture);
 		};
-	}, [onToolChange]);
+	}, [onToolChange, onColorPickerToggle]);
 
 	return { spaceHeld };
 };

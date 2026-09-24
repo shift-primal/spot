@@ -15,7 +15,17 @@ export const App = () => {
 		[],
 	);
 
-	const { spaceHeld } = useGlobalControls({ onToolChange: changeTool });
+	const [colorPickerOpen, setColorPickerOpen] = useState(false);
+
+	const toggleColorPicker = useCallback(
+		() => setColorPickerOpen((open) => !open),
+		[],
+	);
+
+	const { spaceHeld } = useGlobalControls({
+		onToolChange: changeTool,
+		onColorPickerToggle: toggleColorPicker,
+	});
 
 	const changeBrushSize = (px: number) =>
 		setBrushOptions((prev) => ({
@@ -37,6 +47,8 @@ export const App = () => {
 		onToolChange: changeTool,
 		onSizeChange: changeBrushSize,
 		onColorChange: changeBrushColor,
+		colorPickerOpen,
+		onColorPickerOpenChange: setColorPickerOpen,
 	};
 
 	return (

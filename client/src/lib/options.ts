@@ -28,3 +28,5 @@ export const TOOL_KEYS: Record<string, Tool> = {
 	b: "pencil",
 	e: "eraser",
 };
+
+export const COLOR_PICKER_KEY = "c";

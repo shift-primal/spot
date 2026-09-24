@@ -9,6 +9,8 @@ export interface ToolbarProps {
 	onToolChange: (tool: Tool) => void;
 	onSizeChange: (px: number) => void;
 	onColorChange: (color: string) => void;
+	colorPickerOpen: boolean;
+	onColorPickerOpenChange: (open: boolean) => void;
 }
 
 export const Toolbar = ({
@@ -16,6 +18,8 @@ export const Toolbar = ({
 	onToolChange,
 	onSizeChange,
 	onColorChange,
+	colorPickerOpen,
+	onColorPickerOpenChange,
 }: ToolbarProps) => {
 	const toolSelectionProps = {
 		brushOptions,
@@ -30,6 +34,8 @@ export const Toolbar = ({
 	const colorPickerProps = {
 		brushOptions,
 		onColorChange,
+		open: colorPickerOpen,
+		onOpenChange: onColorPickerOpenChange,
 	};
 
 	return (

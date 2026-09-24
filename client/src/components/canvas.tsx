@@ -32,6 +32,7 @@ export const Canvas = ({
 				zoom={zoom}
 				hidden={spaceHeld || isPanning}
 				anchor={resizeAnchor}
+				label={resizeAnchor && `${brushOptions.size}px`}
 			/>
 			<canvas
 				className={cn(
