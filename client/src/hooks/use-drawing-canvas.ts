@@ -1,6 +1,7 @@
 import { type Segment, WORLD_HEIGHT, WORLD_WIDTH } from "@spot/shared";
 import { useCallback, useRef } from "react";
 import { useCamera } from "#/hooks/use-camera";
+import { useCameraControls } from "#/hooks/use-camera-controls";
 import { type Surface, useCanvasSurface } from "#/hooks/use-canvas-surface";
 import { useSharedSegments } from "#/hooks/use-shared-segments";
 import { useStroke } from "#/hooks/use-stroke";
@@ -8,7 +9,7 @@ import { paintSegment } from "#/lib/canvas";
 import type { BrushOptions } from "#/types";
 
 export const useDrawingCanvas = (brushOptions: BrushOptions) => {
-	const { cameraRef, screenToWorld } = useCamera();
+	const { cameraRef, screenToWorld, panBy } = useCamera();
 	const segmentsRef = useRef<Segment[]>([]);
 
 	const drawScene = useCallback(
@@ -44,6 +45,8 @@ export const useDrawingCanvas = (brushOptions: BrushOptions) => {
 		const surface = getSurface();
 		if (surface) drawScene(surface);
 	}, [getSurface, drawScene]);
+
+	useCameraControls({ canvasRef, panBy, redraw });
 
 	const paintSegments = useCallback(
 		(segments: Segment[]) => {

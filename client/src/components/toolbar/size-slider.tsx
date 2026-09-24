@@ -1,5 +1,5 @@
 import { Slider } from "#/components/shadcn/slider";
-import { MAX_BRUSH_SIZE, MIN_BRUSH_SIZE } from "#/lib/options";
+import { BRUSH_SIZE_BOUNDS } from "#/lib/options";
 import type { BrushOptions } from "#/types";
 
 export const SizeSlider = ({
@@ -12,8 +12,8 @@ export const SizeSlider = ({
 	return (
 		<Slider
 			className="min-w-32"
-			min={MIN_BRUSH_SIZE}
-			max={MAX_BRUSH_SIZE}
+			min={BRUSH_SIZE_BOUNDS.min}
+			max={BRUSH_SIZE_BOUNDS.max}
 			value={[brushOptions.size]}
 			onValueChange={(val) =>
 				onSizeChange(typeof val === "number" ? val : val[0])

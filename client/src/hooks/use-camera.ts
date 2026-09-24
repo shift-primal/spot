@@ -10,5 +10,11 @@ export const useCamera = () => {
 		return { x: p.x / zoom + x, y: p.y / zoom + y };
 	}, []);
 
-	return { cameraRef, screenToWorld };
+	const panBy = (delta: Point) => {
+		const camera = cameraRef.current;
+		camera.x -= delta.x / camera.zoom;
+		camera.y -= delta.y / camera.zoom;
+	};
+
+	return { cameraRef, screenToWorld, panBy };
 };
