@@ -55,6 +55,16 @@ io.on("connection", (socket) => {
 		}
 	});
 
+	socket.on("name:set", (name, callback) => {
+		if (typeof callback !== "function") return;
+
+		const parsed = parseName(name);
+		if (!parsed) return callback({ ok: false, error: "invalid name" });
+
+		socket.data.name = parsed;
+		callback({ ok: true, name: parsed });
+	});
+
 	socket.on("cursor:move", (cursor) => {
 		socket.broadcast.volatile.emit("cursor:move", socket.id, {
 			...cursor,

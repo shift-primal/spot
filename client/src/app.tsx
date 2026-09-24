@@ -1,18 +1,32 @@
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Canvas, type CanvasProps } from "#/components/canvas";
+import { NameBadge } from "#/components/ui/name-badge";
 import { Toolbar, type ToolbarProps } from "#/components/ui/toolbar";
 import { WelcomeDialog } from "#/components/ui/welcome-dialog";
 import { useGlobalControls } from "#/hooks/use-global-controls";
 import { useJoin } from "#/hooks/use-join";
-import { INITIAL_BRUSH_OPTIONS } from "#/lib/options";
+import { STORAGE_KEYS } from "#/lib/options";
+import { loadBrushOptions, save } from "#/lib/storage";
 import type { BrushOptions, Tool } from "#/types";
 
 export const App = () => {
-	const { joined, error: joinError, join } = useJoin();
+	const {
+		name,
+		storedName,
+		error: joinError,
+		dialogOpen,
+		renaming,
+		submitName,
+		startRenaming,
+		cancelRenaming,
+	} = useJoin();
 
-	const [brushOptions, setBrushOptions] = useState<BrushOptions>(
-		INITIAL_BRUSH_OPTIONS,
-	);
+	const [brushOptions, setBrushOptions] =
+		useState<BrushOptions>(loadBrushOptions);
+
+	useEffect(() => {
+		save(STORAGE_KEYS.brush, brushOptions);
+	}, [brushOptions]);
 
 	const changeTool = useCallback(
 		(tool: Tool) => setBrushOptions((prev) => ({ ...prev, tool })),
@@ -57,7 +71,15 @@ export const App = () => {
 
 	return (
 		<main className="relative h-dvh w-dvw overflow-hidden select-none [-webkit-touch-callout:none]">
-			<WelcomeDialog open={!joined} error={joinError} onJoin={join} />
+			<WelcomeDialog
+				open={dialogOpen}
+				renaming={renaming}
+				error={joinError}
+				defaultName={name ?? storedName}
+				onSubmit={submitName}
+				onCancel={cancelRenaming}
+			/>
+			{name && <NameBadge name={name} onClick={startRenaming} />}
 			<Canvas {...canvasProps} />
 			<Toolbar {...toolbarProps} />
 		</main>

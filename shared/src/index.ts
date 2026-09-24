@@ -29,6 +29,10 @@ export interface JoinAuth {
 	name: string;
 }
 
+export type NameResult =
+	| { ok: true; name: string }
+	| { ok: false; error: string };
+
 export const NAME_MAX_LENGTH = 24;
 
 export const parseName = (name: unknown): string | null => {
@@ -49,6 +53,7 @@ export interface ClientToServerEvents {
 	"history:get": (callback: (history: Segment[]) => void) => void;
 	"cursor:move": (cursor: Cursor) => void;
 	"cursor:leave": () => void;
+	"name:set": (name: string, callback: (result: NameResult) => void) => void;
 }
 
 export const WORLD_SIZE: Size = {

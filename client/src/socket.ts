@@ -9,8 +9,12 @@ export const socket: Socket<ServerToClientEvents, ClientToServerEvents> = io({
 	autoConnect: false,
 });
 
-export const join = (name: string) => {
+export const setAuthName = (name: string) => {
 	const auth: JoinAuth = { name };
 	socket.auth = auth;
+};
+
+export const join = (name: string) => {
+	setAuthName(name);
 	socket.connect();
 };

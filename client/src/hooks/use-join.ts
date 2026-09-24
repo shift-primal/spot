@@ -1,14 +1,24 @@
-import { useCallback, useEffect, useState } from "react";
-import { join as joinSocket, socket } from "#/socket";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { STORAGE_KEYS } from "#/lib/options";
+import { loadName, save } from "#/lib/storage";
+import { join as joinSocket, setAuthName, socket } from "#/socket";
 
 export const useJoin = () => {
-	const [joined, setJoined] = useState(socket.connected);
+	const [storedName] = useState(loadName);
+	const pendingNameRef = useRef<string | null>(null);
+	const [name, setName] = useState<string | null>(null);
 	const [error, setError] = useState<string | null>(null);
+	const [renaming, setRenaming] = useState(false);
+
+	const acceptName = useCallback((accepted: string) => {
+		setName(accepted);
+		setError(null);
+		save(STORAGE_KEYS.name, accepted);
+	}, []);
 
 	useEffect(() => {
 		const handleConnect = () => {
-			setJoined(true);
-			setError(null);
+			if (pendingNameRef.current) acceptName(pendingNameRef.current);
 		};
 
 		const handleError = (err: Error) =>
@@ -23,12 +33,54 @@ export const useJoin = () => {
 			socket.off("connect", handleConnect);
 			socket.off("connect_error", handleError);
 		};
-	}, []);
+	}, [acceptName]);
 
-	const join = useCallback((name: string) => {
+	const submitName = useCallback(
+		(next: string) => {
+			setError(null);
+
+			if (!socket.connected) {
+				pendingNameRef.current = next;
+				joinSocket(next);
+				return;
+			}
+
+			socket.emit("name:set", next, (result) => {
+				if (!result.ok) return setError(result.error);
+
+				setAuthName(result.name);
+				acceptName(result.name);
+				setRenaming(false);
+			});
+		},
+		[acceptName],
+	);
+
+	useEffect(() => {
+		if (storedName) submitName(storedName);
+	}, [storedName, submitName]);
+
+	const startRenaming = useCallback(() => {
 		setError(null);
-		joinSocket(name);
+		setRenaming(true);
 	}, []);
 
-	return { joined, error, join };
+	const cancelRenaming = useCallback(() => {
+		setError(null);
+		setRenaming(false);
+	}, []);
+
+	const dialogOpen =
+		renaming || (name === null && (!storedName || error !== null));
+
+	return {
+		name,
+		storedName,
+		error,
+		dialogOpen,
+		renaming,
+		submitName,
+		startRenaming,
+		cancelRenaming,
+	};
 };

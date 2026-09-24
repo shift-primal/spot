@@ -17,3 +17,8 @@ export interface Bounds {
 export interface Camera extends Point {
 	zoom: number;
 }
+
+export interface Control {
+	label: string;
+	keys: string[][];
+}

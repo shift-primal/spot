@@ -1,13 +1,30 @@
 import { type Point, WORLD_SIZE } from "@spot/shared";
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { clampAxis } from "#/lib/camera";
 import { clamp } from "#/lib/general";
-import { CAMERA_ZOOM_BOUNDS, INITIAL_CAMERA } from "#/lib/options";
+import { CAMERA_ZOOM_BOUNDS, STORAGE_KEYS } from "#/lib/options";
+import { loadCamera, save } from "#/lib/storage";
 import type { Camera } from "#/types";
 
 export const useCamera = () => {
-	const cameraRef = useRef<Camera>({ ...INITIAL_CAMERA });
-	const [zoom, setZoom] = useState(INITIAL_CAMERA.zoom);
+	const [initialCamera] = useState(loadCamera);
+	const cameraRef = useRef<Camera>(initialCamera);
+	const [zoom, setZoom] = useState(initialCamera.zoom);
+
+	useEffect(() => {
+		const saveCamera = () => save(STORAGE_KEYS.camera, cameraRef.current);
+		const handleVisibility = () => {
+			if (document.visibilityState === "hidden") saveCamera();
+		};
+
+		document.addEventListener("visibilitychange", handleVisibility);
+		window.addEventListener("pagehide", saveCamera);
+
+		return () => {
+			document.removeEventListener("visibilitychange", handleVisibility);
+			window.removeEventListener("pagehide", saveCamera);
+		};
+	}, []);
 
 	const clampToWorld = (viewport: { width: number; height: number }) => {
 		const camera = cameraRef.current;

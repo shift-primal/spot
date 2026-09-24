@@ -1,4 +1,4 @@
-import type { Bounds, BrushOptions, Camera, Tool } from "#/types";
+import type { Bounds, BrushOptions, Camera, Control, Tool } from "#/types";
 
 export const INITIAL_CAMERA: Camera = { x: 5000, y: 5000, zoom: 1 };
 
@@ -37,3 +37,30 @@ export const CURSOR_SEND_INTERVAL = 50;
 export const TOUCH_STROKE_DELAY = 100;
 
 export const TOUCH_STROKE_SLOP = 8;
+
+export const STORAGE_KEYS = {
+	name: "spot:name",
+	brush: "spot:brush",
+	camera: "spot:camera",
+};
+
+const toolKey = (tool: Tool) =>
+	(
+		Object.keys(TOOL_KEYS).find((key) => TOOL_KEYS[key] === tool) ?? ""
+	).toUpperCase();
+
+export const SHORTCUTS: Control[] = [
+	{ label: "Pencil", keys: [[toolKey("pencil")]] },
+	{ label: "Eraser", keys: [[toolKey("eraser")]] },
+	{ label: "Color picker", keys: [[COLOR_PICKER_KEY.toUpperCase()]] },
+	{ label: "Draw with the other tool", keys: [["Right drag"]] },
+	{ label: "Resize brush", keys: [["Shift", "Drag"]] },
+	{ label: "Pan", keys: [["Space", "Drag"], ["Middle drag"]] },
+	{ label: "Zoom", keys: [["Scroll"]] },
+];
+
+export const GESTURES: Control[] = [
+	{ label: "Draw", keys: [["One finger"]] },
+	{ label: "Pan", keys: [["Two finger drag"]] },
+	{ label: "Zoom", keys: [["Pinch"]] },
+];
