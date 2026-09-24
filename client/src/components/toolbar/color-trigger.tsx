@@ -1,6 +1,6 @@
 export const ColorTrigger = ({ color }: { color: string }) => (
-	<div
-		className="outline size-5 rounded-full"
+	<span
+		className="block size-full rounded-full outline"
 		style={{ backgroundColor: color }}
 	/>
 );

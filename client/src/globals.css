@@ -124,6 +124,8 @@
 	}
 	body {
 		@apply bg-background text-foreground;
+		touch-action: none;
+		overscroll-behavior: none;
 	}
 	button:not(:disabled),
 	[role="button"]:not(:disabled) {

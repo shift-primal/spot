@@ -8,6 +8,6 @@ export const BRUSH_SIZE_BOUNDS: Bounds = {
 };
 
 export const CAMERA_ZOOM_BOUNDS: Bounds = {
-	min: 1,
-	max: 64,
+	min: 0.5,
+	max: 16,
 };

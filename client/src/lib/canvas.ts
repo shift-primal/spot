@@ -23,3 +23,14 @@ export const paintSegment = (
 	ctx.lineTo(segment.to.x, segment.to.y);
 	ctx.stroke();
 };
+
+const compressPoint = (p: Point) => ({
+	x: Math.round(p.x),
+	y: Math.round(p.y),
+});
+
+export const compressSegment = (s: Segment): Segment => ({
+	...s,
+	from: compressPoint(s.from),
+	to: compressPoint(s.to),
+});
