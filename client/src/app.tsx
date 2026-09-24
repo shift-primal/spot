@@ -56,7 +56,7 @@ export const App = () => {
 	};
 
 	return (
-		<main className="relative h-dvh w-dvw overflow-hidden">
+		<main className="relative h-dvh w-dvw overflow-hidden select-none [-webkit-touch-callout:none]">
 			<WelcomeDialog open={!joined} error={joinError} onJoin={join} />
 			<Canvas {...canvasProps} />
 			<Toolbar {...toolbarProps} />

@@ -5,10 +5,9 @@ import type {
 } from "@spot/shared";
 import { io, type Socket } from "socket.io-client";
 
-export const socket: Socket<ServerToClientEvents, ClientToServerEvents> = io(
-	"http://localhost:3000",
-	{ autoConnect: false },
-);
+export const socket: Socket<ServerToClientEvents, ClientToServerEvents> = io({
+	autoConnect: false,
+});
 
 export const join = (name: string) => {
 	const auth: JoinAuth = { name };

@@ -33,3 +33,7 @@ export const COLOR_PICKER_KEY = "c";
 
 // min ms between cursor updates sent to the server
 export const CURSOR_SEND_INTERVAL = 50;
+
+export const TOUCH_STROKE_DELAY = 100;
+
+export const TOUCH_STROKE_SLOP = 8;

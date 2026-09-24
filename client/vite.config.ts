@@ -10,4 +10,9 @@ export default defineConfig({
 		babel({ presets: [reactCompilerPreset()] }),
 		tailwindcss(),
 	],
+	server: {
+		proxy: {
+			"/socket.io": { target: "http://localhost:3000", ws: true },
+		},
+	},
 });

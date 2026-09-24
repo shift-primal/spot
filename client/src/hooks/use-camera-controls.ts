@@ -28,6 +28,46 @@ export const useCameraControls = ({
 		if (!canvas) return;
 
 		let panPointerId: number | null = null;
+		const touches = new Map<number, Point>();
+		let pinch: { mid: Point; dist: number } | null = null;
+
+		const measurePinch = () => {
+			if (touches.size < 2) return null;
+			const [a, b] = touches.values();
+			return {
+				mid: { x: (a.x + b.x) / 2, y: (a.y + b.y) / 2 },
+				dist: Math.hypot(a.x - b.x, a.y - b.y),
+			};
+		};
+
+		const handleTouchDown = (e: PointerEvent) => {
+			touches.set(e.pointerId, getPoint(e, canvas));
+			pinch = measurePinch();
+			if (pinch) {
+				canvas.setPointerCapture(e.pointerId);
+				setIsPanning(true);
+			}
+		};
+
+		const handleTouchMove = (e: PointerEvent) => {
+			if (!touches.has(e.pointerId)) return;
+			touches.set(e.pointerId, getPoint(e, canvas));
+
+			const next = measurePinch();
+			if (!pinch || !next) return;
+
+			panBy({ x: next.mid.x - pinch.mid.x, y: next.mid.y - pinch.mid.y });
+			if (pinch.dist > 0) zoomAt(next.mid, next.dist / pinch.dist);
+			clampToWorld(viewport());
+			redraw();
+			pinch = next;
+		};
+
+		const handleTouchUp = (e: PointerEvent) => {
+			if (!touches.delete(e.pointerId)) return;
+			pinch = measurePinch();
+			if (!pinch) setIsPanning(false);
+		};
 
 		const viewport = () => ({
 			width: canvas.clientWidth,
@@ -35,6 +75,8 @@ export const useCameraControls = ({
 		});
 
 		const handlePointerDown = (e: PointerEvent) => {
+			if (e.pointerType === "touch") return handleTouchDown(e);
+
 			const middle = e.button === 1;
 			const spaceLeft = e.button === 0 && spaceHeldRef.current;
 			if (!middle && !spaceLeft) return;
@@ -46,6 +88,7 @@ export const useCameraControls = ({
 		};
 
 		const handlePointerMove = (e: PointerEvent) => {
+			if (e.pointerType === "touch") return handleTouchMove(e);
 			if (e.pointerId !== panPointerId) return;
 
 			panBy({ x: e.movementX, y: e.movementY });
@@ -54,6 +97,7 @@ export const useCameraControls = ({
 		};
 
 		const handlePointerUp = (e: PointerEvent) => {
+			if (e.pointerType === "touch") return handleTouchUp(e);
 			if (e.pointerId !== panPointerId) return;
 
 			panPointerId = null;

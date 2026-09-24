@@ -15,6 +15,16 @@ export const paintSegment = (
 	ctx: CanvasRenderingContext2D,
 	segment: Segment,
 ) => {
+	const { from, to } = segment;
+
+	if (from.x === to.x && from.y === to.y) {
+		ctx.fillStyle = segment.color;
+		ctx.beginPath();
+		ctx.arc(from.x, from.y, segment.size / 2, 0, Math.PI * 2);
+		ctx.fill();
+		return;
+	}
+
 	ctx.lineWidth = segment.size;
 	ctx.strokeStyle = segment.color;
 

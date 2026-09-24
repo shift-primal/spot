@@ -14,10 +14,7 @@ export const usePaintCursor = (
 			const canvas = canvasRef.current;
 			if (!canvas) return;
 
-			if (
-				e.pointerType === "touch" &&
-				(e.type === "pointerup" || e.type === "pointercancel")
-			) {
+			if (e.pointerType === "touch") {
 				setPosition(null);
 				return;
 			}
