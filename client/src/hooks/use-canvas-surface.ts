@@ -1,10 +1,15 @@
 import { useCallback, useEffect, useRef } from "react";
 
-export const useCanvasSurface = () => {
+export interface Surface {
+	canvas: HTMLCanvasElement;
+	ctx: CanvasRenderingContext2D;
+}
+
+export const useCanvasSurface = (onResize: (surface: Surface) => void) => {
 	const canvasRef = useRef<HTMLCanvasElement>(null);
 	const ctxRef = useRef<CanvasRenderingContext2D | null>(null);
 
-	const getSurface = useCallback(() => {
+	const getSurface = useCallback((): Surface | null => {
 		const canvas = canvasRef.current;
 		const ctx = ctxRef.current;
 		if (!canvas || !ctx) return null;
@@ -25,18 +30,13 @@ export const useCanvasSurface = () => {
 			const height = Math.round(canvas.clientHeight * dpr);
 			if (canvas.width === width && canvas.height === height) return;
 
-			const snapshot = document.createElement("canvas");
-			snapshot.width = canvas.width;
-			snapshot.height = canvas.height;
-			snapshot.getContext("2d")?.drawImage(canvas, 0, 0);
-
+			// resizing clears the bitmap and resets context state
 			canvas.width = width;
 			canvas.height = height;
-			ctx.drawImage(snapshot, 0, 0);
-
-			ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
 			ctx.lineJoin = "round";
 			ctx.lineCap = "round";
+
+			onResize({ canvas, ctx });
 		};
 
 		resize();
@@ -44,7 +44,7 @@ export const useCanvasSurface = () => {
 		observer.observe(canvas);
 
 		return () => observer.disconnect();
-	}, []);
+	}, [onResize]);
 
 	return { canvasRef, getSurface };
 };

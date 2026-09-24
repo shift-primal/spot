@@ -1,21 +1,57 @@
-import type { Segment } from "@spot/shared";
-import { useCallback } from "react";
-import { useCanvasSurface } from "#/hooks/use-canvas-surface";
+import { type Segment, WORLD_HEIGHT, WORLD_WIDTH } from "@spot/shared";
+import { useCallback, useRef } from "react";
+import { useCamera } from "#/hooks/use-camera";
+import { type Surface, useCanvasSurface } from "#/hooks/use-canvas-surface";
 import { useSharedSegments } from "#/hooks/use-shared-segments";
 import { useStroke } from "#/hooks/use-stroke";
 import { paintSegment } from "#/lib/canvas";
 import type { BrushOptions } from "#/types";
 
 export const useDrawingCanvas = (brushOptions: BrushOptions) => {
-	const { canvasRef, getSurface } = useCanvasSurface();
+	const { cameraRef, screenToWorld } = useCamera();
+	const segmentsRef = useRef<Segment[]>([]);
+
+	const drawScene = useCallback(
+		({ canvas, ctx }: Surface) => {
+			const { x, y, zoom } = cameraRef.current;
+			const dpr = window.devicePixelRatio || 1;
+
+			ctx.setTransform(1, 0, 0, 1, 0, 0);
+			ctx.fillStyle = "#000";
+			ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+			ctx.setTransform(
+				dpr * zoom,
+				0,
+				0,
+				dpr * zoom,
+				-x * dpr * zoom,
+				-y * dpr * zoom,
+			);
+			ctx.fillStyle = "#fff";
+			ctx.fillRect(0, 0, WORLD_WIDTH, WORLD_HEIGHT);
+
+			for (const segment of segmentsRef.current) {
+				paintSegment(ctx, segment);
+			}
+		},
+		[cameraRef],
+	);
+
+	const { canvasRef, getSurface } = useCanvasSurface(drawScene);
+
+	const redraw = useCallback(() => {
+		const surface = getSurface();
+		if (surface) drawScene(surface);
+	}, [getSurface, drawScene]);
 
 	const paintSegments = useCallback(
 		(segments: Segment[]) => {
 			const surface = getSurface();
-			if (!surface) return;
 
 			for (const segment of segments) {
-				paintSegment(surface.ctx, segment);
+				segmentsRef.current.push(segment);
+				if (surface) paintSegment(surface.ctx, segment);
 			}
 		},
 		[getSurface],
@@ -26,6 +62,7 @@ export const useDrawingCanvas = (brushOptions: BrushOptions) => {
 	const { startDrawing, continueDrawing, stopDrawing } = useStroke({
 		canvasRef,
 		brushOptions,
+		screenToWorld,
 		onSegment: (segment) => {
 			paintSegments([segment]);
 			sendSegment(segment);
@@ -33,15 +70,14 @@ export const useDrawingCanvas = (brushOptions: BrushOptions) => {
 	});
 
 	const resetCanvas = () => {
-		const surface = getSurface();
-		if (!surface) return;
-		const { canvas, ctx } = surface;
-
-		ctx.clearRect(0, 0, canvas.width, canvas.height);
+		segmentsRef.current = [];
+		redraw();
 	};
 
 	return {
 		canvasRef,
+		cameraRef,
+		redraw,
 		startDrawing,
 		continueDrawing,
 		stopDrawing,

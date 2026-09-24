@@ -6,10 +6,12 @@ import type { BrushOptions, Tool } from "#/types";
 export const useStroke = ({
 	canvasRef,
 	brushOptions,
+	screenToWorld,
 	onSegment,
 }: {
 	canvasRef: RefObject<HTMLCanvasElement | null>;
 	brushOptions: BrushOptions;
+	screenToWorld: (p: Point) => Point;
 	onSegment: (segment: Segment) => void;
 }) => {
 	const lastPointRef = useRef<Point>({ x: 0, y: 0 });
@@ -22,7 +24,7 @@ export const useStroke = ({
 
 		const opposite = brushOptions.tool === "pencil" ? "eraser" : "pencil";
 		strokeToolRef.current = e.button === 2 ? opposite : brushOptions.tool;
-		lastPointRef.current = getPoint(e, canvasRef.current);
+		lastPointRef.current = screenToWorld(getPoint(e, canvasRef.current));
 		e.currentTarget.setPointerCapture(e.pointerId);
 		setIsDrawing(true);
 	};
@@ -31,7 +33,7 @@ export const useStroke = ({
 		if (!canvasRef.current) return;
 		if (!isDrawing) return;
 
-		const point = getPoint(e, canvasRef.current);
+		const point = screenToWorld(getPoint(e, canvasRef.current));
 
 		onSegment({
 			from: { x: lastPointRef.current.x, y: lastPointRef.current.y },
