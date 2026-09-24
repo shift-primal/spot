@@ -7,11 +7,13 @@ export const useStroke = ({
 	canvasRef,
 	brushOptions,
 	screenToWorld,
+	spaceHeld,
 	onSegment,
 }: {
 	canvasRef: RefObject<HTMLCanvasElement | null>;
 	brushOptions: BrushOptions;
 	screenToWorld: (p: Point) => Point;
+	spaceHeld: boolean;
 	onSegment: (segment: Segment) => void;
 }) => {
 	const lastPointRef = useRef<Point>({ x: 0, y: 0 });
@@ -20,7 +22,10 @@ export const useStroke = ({
 
 	const startDrawing = (e: React.PointerEvent<HTMLCanvasElement>) => {
 		if (!canvasRef.current) return;
-		if (e.button === 1) return;
+		// middle button / space + left pan the camera instead
+		if (e.button === 1 || spaceHeld) return;
+		// shift + left resizes the brush instead
+		if (e.button === 0 && e.shiftKey) return;
 
 		const opposite = brushOptions.tool === "pencil" ? "eraser" : "pencil";
 		strokeToolRef.current = e.button === 2 ? opposite : brushOptions.tool;

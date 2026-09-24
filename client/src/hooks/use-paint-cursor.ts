@@ -41,7 +41,6 @@ export const usePaintCursor = (
 		};
 	}, [canvasRef]);
 
-	// Right-click draws with the opposite tool (see useStroke)
 	const erasing = (tool === "eraser") !== rightHeld;
 
 	return { position, erasing };

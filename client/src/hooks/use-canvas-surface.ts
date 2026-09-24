@@ -16,7 +16,6 @@ export const useCanvasSurface = (onResize: (surface: Surface) => void) => {
 		return { canvas, ctx };
 	}, []);
 
-	// setup canvas
 	useEffect(() => {
 		const canvas = canvasRef.current;
 		const ctx = canvas?.getContext("2d");
@@ -30,7 +29,6 @@ export const useCanvasSurface = (onResize: (surface: Surface) => void) => {
 			const height = Math.round(canvas.clientHeight * dpr);
 			if (canvas.width === width && canvas.height === height) return;
 
-			// resizing clears the bitmap and resets context state
 			canvas.width = width;
 			canvas.height = height;
 			ctx.lineJoin = "round";

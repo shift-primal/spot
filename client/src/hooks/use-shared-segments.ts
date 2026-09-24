@@ -5,7 +5,6 @@ import { socket } from "#/socket";
 export const useSharedSegments = (
 	onSegments: (segments: Segment[]) => void,
 ) => {
-	// setup socket
 	useEffect(() => {
 		socket.emit("history:get", onSegments);
 

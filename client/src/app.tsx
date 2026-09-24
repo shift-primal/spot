@@ -1,17 +1,21 @@
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import { Canvas, type CanvasProps } from "#/components/canvas";
 import { Toolbar, type ToolbarProps } from "#/components/ui/toolbar";
+import { useGlobalControls } from "#/hooks/use-global-controls";
+import { INITIAL_BRUSH_OPTIONS } from "#/lib/options";
 import type { BrushOptions, Tool } from "#/types";
 
 export const App = () => {
-	const [brushOptions, setBrushOptions] = useState<BrushOptions>({
-		tool: "pencil",
-		color: "#000",
-		size: 5,
-	});
+	const [brushOptions, setBrushOptions] = useState<BrushOptions>(
+		INITIAL_BRUSH_OPTIONS,
+	);
 
-	const changeTool = (tool: Tool) =>
-		setBrushOptions((prev) => ({ ...prev, tool }));
+	const changeTool = useCallback(
+		(tool: Tool) => setBrushOptions((prev) => ({ ...prev, tool })),
+		[],
+	);
+
+	const { spaceHeld } = useGlobalControls({ onToolChange: changeTool });
 
 	const changeBrushSize = (px: number) =>
 		setBrushOptions((prev) => ({
@@ -24,6 +28,8 @@ export const App = () => {
 
 	const canvasProps: CanvasProps = {
 		brushOptions,
+		spaceHeld,
+		onSizeChange: changeBrushSize,
 	};
 
 	const toolbarProps: ToolbarProps = {

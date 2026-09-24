@@ -1,5 +1,6 @@
 import { type Segment, WORLD_HEIGHT, WORLD_WIDTH } from "@spot/shared";
 import { useCallback, useRef } from "react";
+import { useBrushControls } from "#/hooks/use-brush-controls";
 import { useCamera } from "#/hooks/use-camera";
 import { useCameraControls } from "#/hooks/use-camera-controls";
 import { type Surface, useCanvasSurface } from "#/hooks/use-canvas-surface";
@@ -8,7 +9,11 @@ import { useStroke } from "#/hooks/use-stroke";
 import { paintSegment } from "#/lib/canvas";
 import type { BrushOptions } from "#/types";
 
-export const useDrawingCanvas = (brushOptions: BrushOptions) => {
+export const useDrawingCanvas = (
+	brushOptions: BrushOptions,
+	spaceHeld: boolean,
+	onSizeChange: (size: number) => void,
+) => {
 	const { cameraRef, zoom, screenToWorld, panBy, clampToWorld, zoomAt } =
 		useCamera();
 	const segmentsRef = useRef<Segment[]>([]);
@@ -47,7 +52,20 @@ export const useDrawingCanvas = (brushOptions: BrushOptions) => {
 		if (surface) drawScene(surface);
 	}, [getSurface, drawScene]);
 
-	useCameraControls({ canvasRef, panBy, zoomAt, clampToWorld, redraw });
+	const { isPanning } = useCameraControls({
+		canvasRef,
+		spaceHeld,
+		panBy,
+		zoomAt,
+		clampToWorld,
+		redraw,
+	});
+
+	const { resizeAnchor } = useBrushControls({
+		canvasRef,
+		size: brushOptions.size,
+		onSizeChange,
+	});
 
 	const paintSegments = useCallback(
 		(segments: Segment[]) => {
@@ -67,6 +85,7 @@ export const useDrawingCanvas = (brushOptions: BrushOptions) => {
 		canvasRef,
 		brushOptions,
 		screenToWorld,
+		spaceHeld,
 		onSegment: (segment) => {
 			paintSegments([segment]);
 			sendSegment(segment);
@@ -82,6 +101,8 @@ export const useDrawingCanvas = (brushOptions: BrushOptions) => {
 		canvasRef,
 		cameraRef,
 		zoom,
+		isPanning,
+		resizeAnchor,
 		redraw,
 		startDrawing,
 		continueDrawing,

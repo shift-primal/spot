@@ -1,3 +1,4 @@
+import type { Point } from "@spot/shared";
 import type { RefObject } from "react";
 import { usePaintCursor } from "#/hooks/use-paint-cursor";
 import type { BrushOptions } from "#/types";
@@ -6,16 +7,20 @@ export const PaintCursor = ({
 	brushOptions,
 	canvasRef,
 	zoom,
+	hidden,
+	anchor,
 }: {
 	brushOptions: BrushOptions;
 	canvasRef: RefObject<HTMLCanvasElement | null>;
 	zoom: number;
+	hidden: boolean;
+	anchor: Point | null;
 }) => {
 	const { position, erasing } = usePaintCursor(canvasRef, brushOptions.tool);
 
-	if (!position) return null;
+	const at = anchor ?? position;
+	if (!at || hidden) return null;
 
-	// brush size is in world units
 	const size = brushOptions.size * zoom;
 
 	return (
@@ -26,8 +31,8 @@ export const PaintCursor = ({
 				backgroundColor: erasing ? "#fff" : brushOptions.color,
 				height: size,
 				width: size,
-				left: `${position.x}px`,
-				top: `${position.y}px`,
+				left: `${at.x}px`,
+				top: `${at.y}px`,
 			}}
 		/>
 	);
