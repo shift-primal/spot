@@ -1,7 +1,7 @@
 import type { Point, Segment } from "@spot/shared";
 
 export const getPoint = (
-	e: React.MouseEvent,
+	e: Pick<MouseEvent, "clientX" | "clientY">,
 	canvas: HTMLCanvasElement,
 ): Point => {
 	const rect = canvas.getBoundingClientRect();

@@ -9,7 +9,7 @@ import { paintSegment } from "#/lib/canvas";
 import type { BrushOptions } from "#/types";
 
 export const useDrawingCanvas = (brushOptions: BrushOptions) => {
-	const { cameraRef, screenToWorld, panBy } = useCamera();
+	const { cameraRef, screenToWorld, panBy, zoomAt } = useCamera();
 	const segmentsRef = useRef<Segment[]>([]);
 
 	const drawScene = useCallback(
@@ -46,7 +46,7 @@ export const useDrawingCanvas = (brushOptions: BrushOptions) => {
 		if (surface) drawScene(surface);
 	}, [getSurface, drawScene]);
 
-	useCameraControls({ canvasRef, panBy, redraw });
+	useCameraControls({ canvasRef, panBy, zoomAt, redraw });
 
 	const paintSegments = useCallback(
 		(segments: Segment[]) => {
