@@ -57,6 +57,7 @@ export const App = () => {
 	const canvasProps: CanvasProps = {
 		brushOptions,
 		spaceHeld,
+		minimapHidden: dialogOpen,
 		onSizeChange: changeBrushSize,
 	};
 

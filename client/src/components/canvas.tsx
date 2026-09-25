@@ -8,12 +8,14 @@ import type { BrushOptions } from "#/types";
 export interface CanvasProps {
 	brushOptions: BrushOptions;
 	spaceHeld: boolean;
+	minimapHidden: boolean;
 	onSizeChange: (size: number) => void;
 }
 
 export const Canvas = ({
 	brushOptions,
 	spaceHeld,
+	minimapHidden,
 	onSizeChange,
 }: CanvasProps) => {
 	const {
@@ -57,7 +59,7 @@ export const Canvas = ({
 				onPointerCancel={stopDrawing}
 				onContextMenu={(e) => e.preventDefault()}
 			></canvas>
-			<Minimap canvasRef={attachMinimap} />
+			<Minimap canvasRef={attachMinimap} hidden={minimapHidden} />
 		</>
 	);
 };

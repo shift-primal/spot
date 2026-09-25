@@ -12,24 +12,23 @@ import {
 	TooltipContent,
 	TooltipTrigger,
 } from "#/components/shadcn/tooltip";
-import { MINIMAP_OPEN_QUERY } from "#/lib/options";
 
 const STAY_OPEN_REASONS = ["outside-press", "focus-out"];
 
 export const Minimap = ({
 	canvasRef,
+	hidden,
 }: {
 	canvasRef: Ref<HTMLCanvasElement>;
+	hidden: boolean;
 }) => {
-	const [open, setOpen] = useState(
-		() => window.matchMedia(MINIMAP_OPEN_QUERY).matches,
-	);
+	const [open, setOpen] = useState(false);
 
 	const label = open ? "Hide map" : "Show map";
 
 	return (
 		<Popover
-			open={open}
+			open={open && !hidden}
 			onOpenChange={(next, { reason }) => {
 				if (next || !STAY_OPEN_REASONS.includes(reason)) setOpen(next);
 			}}
