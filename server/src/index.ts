@@ -25,7 +25,7 @@ import {
 	createLimiter,
 	releaseConnection,
 } from "./limits.ts";
-import { SAVE_INTERVAL_MS, STROKE_IDLE_MS } from "./options.ts";
+import { CLIENT_DIST, SAVE_INTERVAL_MS, STROKE_IDLE_MS } from "./options.ts";
 import { isStrokeId, parseSegment, parseTile } from "./validate.ts";
 
 const app = express();
@@ -112,6 +112,12 @@ io.on("connection", (socket) => {
 });
 
 app.get("/health", (_req, res) => res.send("ok"));
+
+app.use(
+	"/assets",
+	express.static(`${CLIENT_DIST}/assets`, { immutable: true, maxAge: "1y" }),
+);
+app.use(express.static(CLIENT_DIST));
 
 app.get("/tiles/:tx/:ty", (req, res) => {
 	const tile = parseTile(req.params.tx, req.params.ty);

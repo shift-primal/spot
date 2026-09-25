@@ -4,9 +4,11 @@ import react, { reactCompilerPreset } from "@vitejs/plugin-react";
 import { defineConfig, loadEnv } from "vite";
 
 // https://vite.dev/config/
-export default defineConfig(({ mode }) => {
+export default defineConfig(({ command, mode }) => {
 	const { PORT: port } = loadEnv(mode, import.meta.dirname, "");
-	if (!port) throw new Error("PORT is not set in client/.env");
+	if (command === "serve" && !port) {
+		throw new Error("PORT is not set in client/.env");
+	}
 
 	return {
 		plugins: [

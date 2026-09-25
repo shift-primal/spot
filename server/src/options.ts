@@ -24,6 +24,8 @@ export const DB_PATH = resolve(
 	process.env.DB_PATH || "data/spot.db",
 );
 
+export const CLIENT_DIST = resolve(import.meta.dirname, "../../client/dist");
+
 export const TRUST_PROXY = ["1", "true"].includes(
 	process.env.TRUST_PROXY?.toLowerCase() ?? "",
 );
