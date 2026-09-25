@@ -1,5 +1,5 @@
+import { BRUSH_SIZE_BOUNDS } from "@spot/shared";
 import { Slider } from "#/components/shadcn/slider";
-import { BRUSH_SIZE_BOUNDS } from "#/lib/options";
 import type { BrushOptions } from "#/types";
 
 export const SizeSlider = ({

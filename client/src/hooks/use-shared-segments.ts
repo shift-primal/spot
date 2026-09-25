@@ -1,25 +1,37 @@
-import type { Segment } from "@spot/shared";
+import type { DrawnSegment, Segment } from "@spot/shared";
 import { useCallback, useEffect } from "react";
 import { socket } from "#/socket";
 
-export const useSharedSegments = (
-	onSegments: (segments: Segment[]) => void,
-) => {
+export const useSharedSegments = ({
+	onSegment,
+	onConnectionChange,
+}: {
+	onSegment: (segment: DrawnSegment) => void;
+	onConnectionChange: (connected: boolean) => void;
+}) => {
 	useEffect(() => {
-		socket.emit("history:get", onSegments);
+		const handleConnect = () => onConnectionChange(true);
+		const handleDisconnect = () => onConnectionChange(false);
 
-		const onRemoteSegment = (segment: Segment) => onSegments([segment]);
-
-		socket.on("segment:draw", onRemoteSegment);
+		socket.on("segment:draw", onSegment);
+		socket.on("connect", handleConnect);
+		socket.on("disconnect", handleDisconnect);
+		if (socket.connected) handleConnect();
 
 		return () => {
-			socket.off("segment:draw", onRemoteSegment);
+			socket.off("segment:draw", onSegment);
+			socket.off("connect", handleConnect);
+			socket.off("disconnect", handleDisconnect);
 		};
-	}, [onSegments]);
+	}, [onSegment, onConnectionChange]);
 
 	const sendSegment = useCallback((segment: Segment) => {
 		socket.emit("segment:draw", segment);
 	}, []);
 
-	return { sendSegment };
+	const endStroke = useCallback((strokeId: number) => {
+		socket.emit("stroke:end", strokeId);
+	}, []);
+
+	return { sendSegment, endStroke };
 };

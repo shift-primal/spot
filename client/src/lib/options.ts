@@ -1,4 +1,5 @@
-import type { Bounds, BrushOptions, Camera, Control, Tool } from "#/types";
+import type { Bounds } from "@spot/shared";
+import type { BrushOptions, Camera, Control, Tool } from "#/types";
 
 export const INITIAL_CAMERA: Camera = { x: 5000, y: 5000, zoom: 1 };
 
@@ -6,11 +7,6 @@ export const INITIAL_BRUSH_OPTIONS: BrushOptions = {
 	tool: "pencil",
 	color: "#000",
 	size: 5,
-};
-
-export const BRUSH_SIZE_BOUNDS: Bounds = {
-	min: 1,
-	max: 32,
 };
 
 export const CAMERA_ZOOM_BOUNDS: Bounds = {
@@ -37,6 +33,19 @@ export const CURSOR_SEND_INTERVAL = 50;
 export const TOUCH_STROKE_DELAY = 100;
 
 export const TOUCH_STROKE_SLOP = 8;
+
+export const TILE_MARGIN = 1;
+
+export const RENDER_TILE_PX = 512;
+
+export const MIN_RENDER_LEVEL = -1;
+
+// max ms per frame spent rendering missing render tiles
+export const RENDER_BUDGET_MS = 8;
+
+export const TILE_RETRY_MS = 2000;
+
+export const MAX_PENDING_OWN_SEGMENTS = 1024;
 
 export const STORAGE_KEYS = {
 	name: "spot:name",

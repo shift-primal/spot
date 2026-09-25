@@ -1,7 +1,6 @@
-import { parseName } from "@spot/shared";
+import { BRUSH_SIZE_BOUNDS, HEX_COLOR, parseName } from "@spot/shared";
 import { clamp } from "#/lib/general";
 import {
-	BRUSH_SIZE_BOUNDS,
 	CAMERA_ZOOM_BOUNDS,
 	INITIAL_BRUSH_OPTIONS,
 	INITIAL_CAMERA,
@@ -29,8 +28,6 @@ const isRecord = (value: unknown): value is Record<string, unknown> =>
 
 const isFiniteNumber = (value: unknown): value is number =>
 	typeof value === "number" && Number.isFinite(value);
-
-const HEX_COLOR = /^#(?:[0-9a-f]{3,4}|[0-9a-f]{6}|[0-9a-f]{8})$/i;
 
 export const loadName = () => parseName(load(STORAGE_KEYS.name));
 

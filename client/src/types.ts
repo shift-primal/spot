@@ -8,11 +8,6 @@ export interface BrushOptions {
 	size: number;
 }
 
-export interface Bounds {
-	min: number;
-	max: number;
-}
-
 // x, y: world point at top left of screen
 export interface Camera extends Point {
 	zoom: number;

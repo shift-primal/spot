@@ -26,3 +26,9 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# SQLite data
+server/data/
+
+# Agent data
+/docs/specs/_root/0001-persistent-tiled-strokes

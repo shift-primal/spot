@@ -1,7 +1,8 @@
 import type { Point } from "@spot/shared";
+import { BRUSH_SIZE_BOUNDS } from "@spot/shared";
 import { type RefObject, useEffect, useRef, useState } from "react";
 import { clamp } from "#/lib/general";
-import { BRUSH_SIZE_BOUNDS, RESIZE_SENSITIVITY } from "#/lib/options";
+import { RESIZE_SENSITIVITY } from "#/lib/options";
 
 export const useBrushControls = ({
 	canvasRef,
