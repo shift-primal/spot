@@ -56,8 +56,8 @@ const renderTile = (tx: number, ty: number) => {
 	ctx.restore();
 };
 
-export const overview = () => {
-	let changed = false;
+const snapshot = async () => {
+	const seq = currentSeq();
 
 	for (let ty = 0; ty < TILE_COUNT; ty++) {
 		for (let tx = 0; tx < TILE_COUNT; tx++) {
@@ -67,11 +67,27 @@ export const overview = () => {
 
 			renderTile(tx, ty);
 			rendered.set(key, version);
-			changed = true;
+			png = null;
 		}
 	}
 
-	if (changed || !png) png = canvas.toBuffer("image/png");
+	png ??= await canvas.encode("png");
 
-	return { png, seq: currentSeq() };
+	return { png, seq };
+};
+
+let queued: ReturnType<typeof snapshot> | null = null;
+
+let last: Promise<unknown> = Promise.resolve();
+
+export const overview = () => {
+	if (queued) return queued;
+
+	const next = last.then(() => {
+		queued = null;
+		return snapshot();
+	});
+	queued = next;
+	last = next.catch(() => {});
+	return next;
 };

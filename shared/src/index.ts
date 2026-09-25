@@ -94,8 +94,8 @@ export interface ClientToServerEvents {
 }
 
 export const WORLD_SIZE: Size = {
-	width: 10000,
-	height: 10000,
+	width: 32768,
+	height: 32768,
 };
 
 export const TILE_SIZE = 512;

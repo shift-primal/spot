@@ -60,7 +60,7 @@ export const Minimap = ({
 				className="w-fit p-1.5"
 			>
 				<div
-					className="w-40 sm:w-48 overflow-hidden rounded-xl border"
+					className="w-3xs sm:w-lg overflow-hidden rounded-xl border"
 					style={{ aspectRatio: `${WORLD_SIZE.width} / ${WORLD_SIZE.height}` }}
 				>
 					<canvas

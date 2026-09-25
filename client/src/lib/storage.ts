@@ -52,13 +52,19 @@ export const loadBrushOptions = (): BrushOptions => {
 	};
 };
 
+const centeredCamera = (): Camera => ({
+	x: INITIAL_CAMERA.x - window.innerWidth / 2 / INITIAL_CAMERA.zoom,
+	y: INITIAL_CAMERA.y - window.innerHeight / 2 / INITIAL_CAMERA.zoom,
+	zoom: INITIAL_CAMERA.zoom,
+});
+
 export const loadCamera = (): Camera => {
 	const stored = load(STORAGE_KEYS.camera);
-	if (!isRecord(stored)) return { ...INITIAL_CAMERA };
+	if (!isRecord(stored)) return centeredCamera();
 
 	const { x, y, zoom } = stored;
 	if (!isFiniteNumber(x) || !isFiniteNumber(y) || !isFiniteNumber(zoom)) {
-		return { ...INITIAL_CAMERA };
+		return centeredCamera();
 	}
 
 	return {

@@ -1,7 +1,11 @@
-import type { Bounds } from "@spot/shared";
+import { type Bounds, WORLD_SIZE } from "@spot/shared";
 import type { BrushOptions, Camera, Control, Tool } from "#/types";
 
-export const INITIAL_CAMERA: Camera = { x: 5000, y: 5000, zoom: 1 };
+export const INITIAL_CAMERA: Camera = {
+	x: WORLD_SIZE.width / 2,
+	y: WORLD_SIZE.height / 2,
+	zoom: 1,
+};
 
 export const INITIAL_BRUSH_OPTIONS: BrushOptions = {
 	tool: "pencil",

@@ -136,8 +136,8 @@ app.get("/tiles/:tx/:ty", (req, res) => {
 	res.type("json").send(tileBody(tile));
 });
 
-app.get("/overview", (_req, res) => {
-	const { png, seq } = overview();
+app.get("/overview", async (_req, res) => {
+	const { png, seq } = await overview();
 	res.set({ [OVERVIEW_SEQ_HEADER]: String(seq), "Cache-Control": "no-store" });
 	res.type("png").send(png);
 });
