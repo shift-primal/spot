@@ -63,8 +63,8 @@ export const useSharedCursors = ({
 		const canvas = canvasRef.current;
 		if (!canvas) return;
 
-		const handleLeave = () => {
-			if (!positionRef.current) return;
+		const handleLeave = (e: PointerEvent) => {
+			if (e.pointerType === "touch" || !positionRef.current) return;
 
 			positionRef.current = null;
 			dirtyRef.current = false;
@@ -76,7 +76,6 @@ export const useSharedCursors = ({
 				e.pointerType === "touch" &&
 				(e.type === "pointerup" || e.type === "pointercancel")
 			) {
-				handleLeave();
 				return;
 			}
 
