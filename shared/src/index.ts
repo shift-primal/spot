@@ -102,6 +102,13 @@ export const TILE_SIZE = 512;
 
 export const TILE_COUNT = Math.ceil(WORLD_SIZE.width / TILE_SIZE);
 
+export const OVERVIEW_SCALE = 1 / 16;
+
+export const OVERVIEW_SEQ_HEADER = "X-Overview-Seq";
+
+export const overviewLineWidth = (size: number) =>
+	Math.max(size, 1 / OVERVIEW_SCALE);
+
 export const POINT_PRECISION = 1 / 16;
 
 export const BRUSH_SIZE_BOUNDS: Bounds = {

@@ -1,12 +1,14 @@
-import { WORLD_SIZE } from "@spot/shared";
+import { type DrawnSegment, WORLD_SIZE } from "@spot/shared";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useBrushControls } from "#/hooks/use-brush-controls";
 import { useCamera } from "#/hooks/use-camera";
 import { useCameraControls } from "#/hooks/use-camera-controls";
 import { type Surface, useCanvasSurface } from "#/hooks/use-canvas-surface";
+import { useMinimapControls } from "#/hooks/use-minimap-controls";
 import { useSharedCursors } from "#/hooks/use-shared-cursors";
 import { useSharedSegments } from "#/hooks/use-shared-segments";
 import { useStroke } from "#/hooks/use-stroke";
+import { createOverview, drawMinimap } from "#/lib/overview";
 import { createScene } from "#/lib/scene";
 import type { BrushOptions } from "#/types";
 
@@ -30,15 +32,23 @@ export const useDrawingCanvas = (
 	}, []);
 
 	const [scene] = useState(() => createScene(requestFrame));
+	const [overview] = useState(() => createOverview(requestFrame));
 
 	useEffect(
 		() => () => {
 			if (frameRef.current !== null) cancelAnimationFrame(frameRef.current);
 			frameRef.current = null;
 			scene.dispose();
+			overview.dispose();
 		},
-		[scene],
+		[scene, overview],
 	);
+
+	const {
+		canvas: minimap,
+		attachCanvas: attachMinimap,
+		getSurface: getMinimapSurface,
+	} = useCanvasSurface(requestFrame);
 
 	const drawScene = useCallback(
 		({ canvas, ctx }: Surface) => {
@@ -69,11 +79,19 @@ export const useDrawingCanvas = (
 				layer.style.transform = `scale(${zoom}) translate(${-x}px, ${-y}px)`;
 				layer.style.setProperty("--zoom", String(zoom));
 			}
+
+			const minimap = getMinimapSurface();
+			if (minimap) {
+				drawMinimap(minimap.canvas, minimap.ctx, overview, camera, {
+					width: canvas.clientWidth,
+					height: canvas.clientHeight,
+				});
+			}
 		},
-		[cameraRef, scene],
+		[cameraRef, scene, overview, getMinimapSurface],
 	);
 
-	const { canvasRef, getSurface } = useCanvasSurface(drawScene);
+	const { canvasRef, attachCanvas, getSurface } = useCanvasSurface(drawScene);
 
 	const redraw = useCallback(() => {
 		if (frameRef.current !== null) {
@@ -97,6 +115,14 @@ export const useDrawingCanvas = (
 		redraw,
 	});
 
+	useMinimapControls({
+		minimap,
+		canvasRef,
+		cameraRef,
+		clampToWorld,
+		redraw,
+	});
+
 	const { resizeAnchor } = useBrushControls({
 		canvasRef,
 		size: brushOptions.size,
@@ -109,9 +135,25 @@ export const useDrawingCanvas = (
 		screenToWorld,
 	});
 
+	const receiveSegment = useCallback(
+		(segment: DrawnSegment) => {
+			scene.receive(segment);
+			overview.receive(segment);
+		},
+		[scene, overview],
+	);
+
+	const setConnected = useCallback(
+		(connected: boolean) => {
+			scene.setConnected(connected);
+			overview.setConnected(connected);
+		},
+		[scene, overview],
+	);
+
 	const { sendSegment, endStroke } = useSharedSegments({
-		onSegment: scene.receive,
-		onConnectionChange: scene.setConnected,
+		onSegment: receiveSegment,
+		onConnectionChange: setConnected,
 	});
 
 	const { startDrawing, continueDrawing, stopDrawing } = useStroke({
@@ -128,6 +170,8 @@ export const useDrawingCanvas = (
 
 	return {
 		canvasRef,
+		attachCanvas,
+		attachMinimap,
 		cameraRef,
 		zoom,
 		isPanning,

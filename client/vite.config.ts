@@ -24,6 +24,7 @@ export default defineConfig(({ command, mode }) => {
 					xfwd: true,
 				},
 				"/tiles": { target: `http://localhost:${port}`, xfwd: true },
+				"/overview": { target: `http://localhost:${port}`, xfwd: true },
 			},
 		},
 	};

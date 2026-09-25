@@ -11,6 +11,21 @@ export interface Paint {
 	size: number;
 }
 
+export const createBitmap = (width: number, height: number) => {
+	if (typeof OffscreenCanvas !== "undefined") {
+		const bitmap = new OffscreenCanvas(width, height);
+		const ctx = bitmap.getContext("2d");
+		if (ctx) return { bitmap, ctx };
+	}
+
+	const bitmap = document.createElement("canvas");
+	bitmap.width = width;
+	bitmap.height = height;
+	const ctx = bitmap.getContext("2d");
+	if (!ctx) throw new Error("2d canvas context unavailable");
+	return { bitmap, ctx };
+};
+
 export const getPoint = (
 	e: Pick<MouseEvent, "clientX" | "clientY">,
 	canvas: HTMLCanvasElement,

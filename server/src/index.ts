@@ -1,6 +1,7 @@
 import { createServer } from "node:http";
 import {
 	type ClientToServerEvents,
+	OVERVIEW_SEQ_HEADER,
 	parseName,
 	type ServerToClientEvents,
 } from "@spot/shared";
@@ -26,6 +27,7 @@ import {
 	releaseConnection,
 } from "./limits.ts";
 import { CLIENT_DIST, SAVE_INTERVAL_MS, STROKE_IDLE_MS } from "./options.ts";
+import { overview } from "./overview.ts";
 import { isStrokeId, parseSegment, parseTile } from "./validate.ts";
 
 const app = express();
@@ -132,6 +134,12 @@ app.get("/tiles/:tx/:ty", (req, res) => {
 	}
 
 	res.type("json").send(tileBody(tile));
+});
+
+app.get("/overview", (_req, res) => {
+	const { png, seq } = overview();
+	res.set({ [OVERVIEW_SEQ_HEADER]: String(seq), "Cache-Control": "no-store" });
+	res.type("png").send(png);
 });
 
 const saveInterval = setInterval(() => {

@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 export interface Surface {
 	canvas: HTMLCanvasElement;
@@ -8,6 +8,12 @@ export interface Surface {
 export const useCanvasSurface = (onResize: (surface: Surface) => void) => {
 	const canvasRef = useRef<HTMLCanvasElement>(null);
 	const ctxRef = useRef<CanvasRenderingContext2D | null>(null);
+	const [canvas, setCanvas] = useState<HTMLCanvasElement | null>(null);
+
+	const attachCanvas = useCallback((node: HTMLCanvasElement | null) => {
+		canvasRef.current = node;
+		setCanvas(node);
+	}, []);
 
 	const getSurface = useCallback((): Surface | null => {
 		const canvas = canvasRef.current;
@@ -17,7 +23,6 @@ export const useCanvasSurface = (onResize: (surface: Surface) => void) => {
 	}, []);
 
 	useEffect(() => {
-		const canvas = canvasRef.current;
 		const ctx = canvas?.getContext("2d");
 		if (!canvas || !ctx) return;
 
@@ -42,7 +47,7 @@ export const useCanvasSurface = (onResize: (surface: Surface) => void) => {
 		observer.observe(canvas);
 
 		return () => observer.disconnect();
-	}, [onResize]);
+	}, [canvas, onResize]);
 
-	return { canvasRef, getSurface };
+	return { canvasRef, canvas, attachCanvas, getSurface };
 };

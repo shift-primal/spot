@@ -3,6 +3,7 @@ import {
 	type DrawnSegment,
 	type Segment,
 	type Tile,
+	type TileStroke,
 	tileKey,
 	tilesForSegment,
 } from "@spot/shared";
@@ -40,8 +41,12 @@ export const parseTileKey = (key: string): Tile => {
 	return { tx, ty };
 };
 
+export const currentSeq = () => seq;
+
+export const tileVersion = (key: string) => tileSeq.get(key) ?? 0;
+
 export const tileEtag = ({ tx, ty }: Tile) =>
-	`"${bootId}-${tileSeq.get(tileKey(tx, ty)) ?? 0}"`;
+	`"${bootId}-${tileVersion(tileKey(tx, ty))}"`;
 
 export const bumpTile = (key: string) => {
 	tileSeq.set(key, ++seq);
@@ -216,17 +221,19 @@ export const save = () => {
 	return [...tilePoints.keys()];
 };
 
-const strokeJson = (color: string, size: number, points: string) =>
-	`{"color":${JSON.stringify(color)},"size":${size},"points":${points}}`;
+interface TileEntry {
+	seq: number;
+	color: string;
+	size: number;
+	points: string;
+}
 
-export const tileBody = ({ tx, ty }: Tile) => {
+const tileEntries = ({ tx, ty }: Tile) => {
 	const key = tileKey(tx, ty);
-	const rows = statements.tileStrokes.all(tx, ty) as unknown as StrokeRow[];
-
-	const entries = rows.map((row) => ({
-		seq: row.seq,
-		json: strokeJson(row.color, row.size, row.points),
-	}));
+	const entries: TileEntry[] = statements.tileStrokes.all(
+		tx,
+		ty,
+	) as unknown as StrokeRow[];
 
 	for (const stroke of [...closedStrokes, ...openStrokes.values()]) {
 		if (!stroke.tiles.has(key)) continue;
@@ -234,12 +241,25 @@ export const tileBody = ({ tx, ty }: Tile) => {
 			if (run.key !== key) continue;
 			entries.push({
 				seq: stroke.seq,
-				json: strokeJson(stroke.color, stroke.size, JSON.stringify(run.points)),
+				color: stroke.color,
+				size: stroke.size,
+				points: JSON.stringify(run.points),
 			});
 		}
 	}
 
-	entries.sort((a, b) => a.seq - b.seq);
-
-	return `{"seq":${seq},"strokes":[${entries.map((entry) => entry.json).join(",")}]}`;
+	return entries.sort((a, b) => a.seq - b.seq);
 };
+
+const strokeJson = ({ color, size, points }: TileEntry) =>
+	`{"color":${JSON.stringify(color)},"size":${size},"points":${points}}`;
+
+export const tileBody = (tile: Tile) =>
+	`{"seq":${seq},"strokes":[${tileEntries(tile).map(strokeJson).join(",")}]}`;
+
+export const tileStrokes = (tile: Tile): TileStroke[] =>
+	tileEntries(tile).map(({ color, size, points }) => ({
+		color,
+		size,
+		points: JSON.parse(points),
+	}));

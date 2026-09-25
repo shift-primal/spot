@@ -9,9 +9,10 @@
 		"build": "tsc --noEmit"
 	},
 	"dependencies": {
+		"@napi-rs/canvas": "^1.0.9",
+		"@spot/shared": "workspace:*",
 		"express": "^5.2.1",
-		"socket.io": "^4.8.3",
-		"@spot/shared": "workspace:*"
+		"socket.io": "^4.8.3"
 	},
 	"devDependencies": {
 		"@types/express": "^5.0.6",

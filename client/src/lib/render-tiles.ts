@@ -2,6 +2,7 @@ import { type Rect, rectsOverlap, TILE_SIZE } from "@spot/shared";
 import {
 	type Ctx2D,
 	clipTo,
+	createBitmap,
 	type Paint,
 	paintSegment,
 	paintStroke,
@@ -38,21 +39,6 @@ export const renderTileRect = (level: number, rx: number, ry: number) => {
 		maxX: (rx + 1) * span,
 		maxY: (ry + 1) * span,
 	};
-};
-
-const createBitmap = () => {
-	if (typeof OffscreenCanvas !== "undefined") {
-		const bitmap = new OffscreenCanvas(RENDER_TILE_PX, RENDER_TILE_PX);
-		const ctx = bitmap.getContext("2d");
-		if (ctx) return { bitmap, ctx };
-	}
-
-	const bitmap = document.createElement("canvas");
-	bitmap.width = RENDER_TILE_PX;
-	bitmap.height = RENDER_TILE_PX;
-	const ctx = bitmap.getContext("2d");
-	if (!ctx) throw new Error("2d canvas context unavailable");
-	return { bitmap, ctx };
 };
 
 const toWorld = ({ rect, ctx }: RenderTile) => {
@@ -97,7 +83,7 @@ export const createRenderTiles = () => {
 		const tile: RenderTile = {
 			rect: renderTileRect(level, rx, ry),
 			stamp: ++stamp,
-			...createBitmap(),
+			...createBitmap(RENDER_TILE_PX, RENDER_TILE_PX),
 		};
 		const { ctx } = tile;
 		ctx.lineCap = "round";

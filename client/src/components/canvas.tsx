@@ -1,4 +1,5 @@
 import { cn } from "cn";
+import { Minimap } from "#/components/ui/minimap";
 import { PaintCursor } from "#/components/ui/paint-cursor";
 import { RemoteCursors } from "#/components/ui/remote-cursors";
 import { useDrawingCanvas } from "#/hooks/use-drawing-canvas";
@@ -17,6 +18,8 @@ export const Canvas = ({
 }: CanvasProps) => {
 	const {
 		canvasRef,
+		attachCanvas,
+		attachMinimap,
 		zoom,
 		isPanning,
 		resizeAnchor,
@@ -47,13 +50,14 @@ export const Canvas = ({
 							? "cursor-grab"
 							: "cursor-none",
 				)}
-				ref={canvasRef}
+				ref={attachCanvas}
 				onPointerDown={startDrawing}
 				onPointerMove={continueDrawing}
 				onPointerUp={stopDrawing}
 				onPointerCancel={stopDrawing}
 				onContextMenu={(e) => e.preventDefault()}
 			></canvas>
+			<Minimap canvasRef={attachMinimap} />
 		</>
 	);
 };

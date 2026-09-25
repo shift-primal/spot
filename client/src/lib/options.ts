@@ -47,6 +47,13 @@ export const TILE_RETRY_MS = 2000;
 
 export const MAX_PENDING_OWN_SEGMENTS = 1024;
 
+export const MINIMAP_OPEN_QUERY = "(min-width: 40rem)";
+
+export const MINIMAP_VIEW_COLOR = "oklch(0.795 0.184 86.047)";
+
+// css px
+export const MINIMAP_VIEW_WIDTH = 2;
+
 export const STORAGE_KEYS = {
 	name: "spot:name",
 	brush: "spot:brush",
