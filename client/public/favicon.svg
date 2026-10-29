@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="512"
+   height="511.90451"
+   viewBox="0 0 135.46666 135.44141"
+   version="1.1"
+   id="svg1"
+   sodipodi:docname="spot.svg"
+   inkscape:version="1.4.4 (dcaf3e7d9e, 2026-05-05)"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview
+     id="namedview1"
+     pagecolor="#ffffff"
+     bordercolor="#000000"
+     borderopacity="0.25"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     inkscape:zoom="0.92595394"
+     inkscape:cx="-172.79477"
+     inkscape:cy="474.10565"
+     inkscape:window-width="2560"
+     inkscape:window-height="1440"
+     inkscape:window-x="0"
+     inkscape:window-y="0"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="svg1" />
+  <defs
+     id="defs1">
+    <linearGradient
+       id="swatch22">
+      <stop
+         style="stop-color:#bcbcbc;stop-opacity:1;"
+         offset="0"
+         id="stop22" />
+      <stop
+         style="stop-color:#ffffff;stop-opacity:1;"
+         offset="0.78304094"
+         id="stop24" />
+      <stop
+         style="stop-color:#c5c5c5;stop-opacity:1;"
+         offset="1"
+         id="stop23" />
+    </linearGradient>
+    <radialGradient
+       xlink:href="#swatch22"
+       id="radialGradient22"
+       cx="67.746712"
+       cy="67.733086"
+       fx="67.746712"
+       fy="67.733086"
+       r="67.809555"
+       gradientTransform="matrix(1,0,0,0.9998135,0,0.01263224)"
+       gradientUnits="userSpaceOnUse"
+       spreadMethod="pad" />
+  </defs>
+  <g
+     id="layer1"
+     transform="translate(3.7882073e-8,-0.01263227)">
+    <!--!Font Awesome Free v7.3.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2026 Fonticons, Inc.-->
+    <g
+       id="g8"
+       transform="matrix(0.99887596,0,0,0.99887596,0.06277281,0.07638102)"
+       style="stroke-width:4.23333;stroke-dasharray:none">
+      <path
+         d="m 67.759372,2.0528744 c -36.277971,0 -65.7055506,29.4022626 -65.7055506,65.6802286 0,36.277977 29.4022566,65.680227 65.6802286,65.680227 0.923626,0 1.821245,-0.026 2.719214,-0.0517 8.158693,-0.33353 13.700456,-7.74784 13.700456,-15.90653 0,-3.72016 -1.53917,-7.23501 -3.104204,-10.77557 -1.103221,-2.53998 -2.232103,-5.05441 -2.77089,-7.671363 -0.153937,-0.820994 -0.256315,-1.667588 -0.256315,-2.539897 0,-6.798914 5.516098,-12.315011 12.315011,-12.315011 h 25.117328 c 9.36454,0 17.88233,-6.362667 17.98495,-15.727205 v -0.692981 c 0,-36.277966 -29.40227,-65.6802286 -65.680228,-65.6802286 z"
+         style="fill:#fdc700;stroke:#000000;stroke-width:4.23333;stroke-dasharray:none;stroke-opacity:1;fill-opacity:1"
+         id="path14" />
+      <path
+         d="m 26.709681,67.733103 c -4.541154,0 -8.210352,3.668675 -8.210352,8.209835 0,4.541159 3.669198,8.210351 8.210352,8.210351 4.541165,0 8.209835,-3.669192 8.209835,-8.210351 0,-4.54116 -3.66867,-8.209835 -8.209835,-8.209835 z"
+         style="fill:#fdfc00;fill-opacity:1;stroke:#000000;stroke-width:3.175;stroke-dasharray:none;stroke-opacity:1"
+         id="path12" />
+      <path
+         d="m 34.919516,34.893247 c -4.541165,0 -8.209835,3.668675 -8.209835,8.209835 0,4.541159 3.66867,8.209835 8.209835,8.209835 4.541155,0 8.209834,-3.668676 8.209834,-8.209835 0,-4.54116 -3.668679,-8.209835 -8.209834,-8.209835 z"
+         style="fill:#ff3f3f;fill-opacity:1;stroke:#000000;stroke-width:3.175;stroke-dasharray:none;stroke-opacity:1"
+         id="path11" />
+      <path
+         d="m 67.759372,18.473061 c -4.541165,0 -8.209835,3.668676 -8.209835,8.209835 0,4.54116 3.66867,8.210351 8.209835,8.210351 4.541154,0 8.210351,-3.669191 8.210351,-8.210351 0,-4.541159 -3.669197,-8.209835 -8.210351,-8.209835 z"
+         style="fill:#3fff62;fill-opacity:1;stroke:#000000;stroke-width:3.175;stroke-dasharray:none;stroke-opacity:1"
+         id="path10" />
+      <path
+         d="m 100.59974,34.893247 c -4.54115,0 -8.210347,3.668675 -8.210347,8.209835 0,4.541159 3.669197,8.209835 8.210347,8.209835 4.54117,0 8.20984,-3.668676 8.20984,-8.209835 0,-4.54116 -3.66867,-8.209835 -8.20984,-8.209835 z"
+         style="fill:#5ac9ff;fill-opacity:1;stroke:#000000;stroke-width:3.175;stroke-dasharray:none;stroke-opacity:1"
+         id="path9" />
+    </g>
+  </g>
+</svg>
