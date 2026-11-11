@@ -1,6 +1,6 @@
 # spot
 
-r/place copy
+**Live:** [spot.haugestol.com](https://spot.haugestol.com)
 
 A shared drawing canvas that anyone can draw on at the same time, in real time. Instead of placing one pixel at a time like r/place, you draw freehand strokes with a pencil or an eraser on one huge 32768 × 32768 canvas. You can see other people's cursors and names while they draw.
 
